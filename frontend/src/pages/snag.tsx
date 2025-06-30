@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Modal, Box, type SxProps, type Theme } from '@mui/material';
-import Header from '@/components/ui/snag/header';
-import Chat from '@/components/ui/snag/chat';
-import Input from '@/components/ui/snag/input';
-import DetailsDialog from '@/components/ui/snag/detailsDialog';
+import Header from '@/components/snag/header';
+import Chat from '@/components/snag/chat';
+import Input from '@/components/snag/input';
+import DetailsDialog from '@/components/snag/detailsDialog';
 import Fade from '@mui/material/Fade';
-import Sidebar from '@/components/ui/snag/sidebar';
+import Sidebar from '@/components/snag/sidebar';
 import Loader from '@/components/ui/loader';
 import axios from 'axios';
 
