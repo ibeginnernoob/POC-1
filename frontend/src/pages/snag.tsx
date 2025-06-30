@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Box, type SxProps, type Theme } from '@mui/material';
 import Header from '@/components/snag/header';
 import Chat from '@/components/snag/chat';
@@ -8,6 +8,8 @@ import Fade from '@mui/material/Fade';
 import Sidebar from '@/components/snag/sidebar';
 import Loader from '@/components/ui/loader';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import useIsAuth from '@/hooks/useIsAuth';
 
 const style: SxProps<Theme> | undefined = {
     position: 'absolute',
@@ -77,6 +79,9 @@ type Response = {
 // if generation not successful -> response = null, isGeneratedSuccess = false, isError = true
 
 export default function Snag() {
+	const navigate = useNavigate();
+	const {isAuth, isLoading: isLoadingIsAuth} = useIsAuth();
+
     const [dialogOpen, setDialogOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -93,6 +98,12 @@ export default function Snag() {
     const handleSidebarClose = () => {
         setSidebarOpen(false);
     };
+
+	useEffect(() => {		
+		if (!isAuth && !isLoadingIsAuth) {
+			navigate('/login');
+		}
+	}, [isAuth]);
 
     const [inputValues, setInputValues] = useState<InputDetails>({
         prompt: '',
@@ -157,7 +168,11 @@ export default function Snag() {
                     </Box>
                 </Fade>
             </Modal>
-            <div className={`w-[100%] overflow-y-auto ${!isGenerationSuccess ? "h-[80vh]" : "h-[100vh]"}`}>
+            <div
+                className={`w-[100%] overflow-y-auto ${
+                    !isGenerationSuccess ? 'h-[80vh]' : 'h-[100vh]'
+                }`}
+            >
                 <Header handleSidebarOpen={handleSidebarOpen} />
                 <Chat
                     response={response}

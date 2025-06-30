@@ -14,8 +14,8 @@ router.use((req, res, next) => {
         const header = req.headers.authorization;
 
         if (!header) {
-            res.json({
-                msg: 'Please sign in first!',
+            res.status(404).json({
+                msg: 'JWT not found',
             });
             return;
         }

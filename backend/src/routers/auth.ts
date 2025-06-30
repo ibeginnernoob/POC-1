@@ -1,9 +1,14 @@
-import axios from 'axios';
 import { Router } from 'express';
 import User from '../models/user';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+
+type JWTPayload = {
+    userId: string;
+    iat: number;
+    exp: number;
+};
 
 const router = Router();
 
@@ -11,13 +16,13 @@ type Req = {
     pb_number: string;
     password: string;
     name: string;
-    gender: string;
-    phone: string;
+    gender?: string;
+    phone?: string;
     email: string;
-    role: string;
-    division: string;
-    department: string;
-    designation: string;
+    role?: string;
+    division?: string;
+    department?: string;
+    designation?: string;
     snags: [];
 };
 
@@ -60,6 +65,7 @@ router.post('/signup', async (req, res, next) => {
         );
 
         res.status(200).json({
+            msg: 'User sign up successful!',
             token: token,
         });
     } catch (e: any) {
@@ -125,13 +131,41 @@ router.post('/signin', async (req, res, next) => {
             }
         );
 
-        res.json({
+        res.status(200).json({
             token: token,
+            msg: 'Sign in successful!',
         });
     } catch (e: any) {
         console.log(e);
         res.status(500).json({
             msg: 'Something went wrong, please try again later!',
+        });
+    }
+});
+
+router.get('/check-auth', async (req, res, next) => {
+    try {
+        const header = req.headers.authorization;
+
+        if (!header) {
+            res.status(404).json({
+                msg: 'JWT not found',
+            });
+            return;
+        }
+
+        const token: string = header?.split(' ')[1];
+        const payload = jwt.verify(
+            token,
+            process.env.JWT_SECRET as string
+        ) as JWTPayload;
+        res.status(200).json({
+            msg: 'Valid JWT, user authenticated',
+        });
+    } catch (e: any) {
+        console.log(e);
+        res.status(403).json({
+            msg: 'Invalid JWT, please sign in',
         });
     }
 });
