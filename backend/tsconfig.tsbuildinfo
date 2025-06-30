@@ -1,0 +1,1 @@
+{"root":["./src/app.ts","./src/middleware/isauth.ts","./src/models/snag.ts","./src/models/user.ts","./src/routers/auth.ts","./src/routers/snag.ts","./src/types/express/index.d.ts"],"version":"5.8.3"}
