@@ -26,8 +26,7 @@ app.get('/', (req, res, next) => {
 });
 
 app.use('/auth', AuthRuter);
-// app.use('/snag', isAuth, SnagRouter);
-app.use('/snag', SnagRouter);
+app.use('/snag', isAuth, SnagRouter);
 
 app.listen(3000, () => {
     console.log('Listening on port 3000!');

@@ -1,19 +1,17 @@
 import { Send, Settings } from 'lucide-react';
 import { Textarea } from '@chakra-ui/react';
 import React, { useMemo } from 'react';
-import type { InputDetails, GeneratedData } from '@/pages/snag';
+import type { InputDetails } from '@/pages/new';
 
 export default function Input({
     handleModalOpen,
     inputValues,
     setInputValues,
-    // setResponse,
     fetchDetails,
 }: {
     handleModalOpen: () => void;
     inputValues: InputDetails;
     setInputValues: React.Dispatch<React.SetStateAction<InputDetails>>;
-    setResponse: React.Dispatch<React.SetStateAction<GeneratedData | null>>;
     fetchDetails: () => Promise<void>;
 }) {
     const validCount = useMemo(() => {

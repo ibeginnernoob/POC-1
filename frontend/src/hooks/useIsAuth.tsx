@@ -16,7 +16,7 @@ const useIsAuth = () => {
                 const res = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/auth/check-auth`, {
 						headers: {
-							Authorization: token
+							authorization: token
 						}
 					}           
                 );

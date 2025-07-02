@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { Slider, Checkbox } from '@chakra-ui/react';
-import { type InputDetails } from '@/pages/snag';
+import { type InputDetails } from '@/pages/new';
 
 type DropDowns = 'Type' | 'Event' | 'Raised By';
 

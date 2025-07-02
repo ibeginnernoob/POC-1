@@ -26,7 +26,7 @@ const Landing = () => {
 
     const features = [
         {
-            id: 'snag',
+            id: 'new',
             title: 'Snag Rectification AI',
             description:
                 'Intelligent analysis and resolution of aircraft maintenance issues with automated workflow management.',
