@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
+import User from '../models/user';
 
 const router = Router();
 
@@ -9,7 +10,7 @@ type JWTPayload = {
     exp: number;
 };
 
-router.use((req, res, next) => {
+router.use(async (req, res, next) => {
     try {
         const header = req.headers.authorization;
 
@@ -25,6 +26,23 @@ router.use((req, res, next) => {
             token,
             process.env.JWT_SECRET as string
         ) as JWTPayload;
+
+        if (!payload.userId) {
+			res.status(404).json({
+                msg: 'JWT payload incorrect',
+            });
+			return;
+        }
+
+		const user = await User.findById(payload.userId);
+
+		if (!user) {
+			res.status(404).json({
+                msg: 'Invalid user credentials, please sign in',
+            });
+			return;
+		}
+
         req.userId = payload.userId;
         console.log(req.userId);
         next();

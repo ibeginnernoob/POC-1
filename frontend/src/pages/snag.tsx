@@ -63,7 +63,7 @@ export default function Snag() {
     };
     const handleSidebarClose = () => {
         setSidebarOpen(false);
-    };
+    };    
 
     useEffect(() => {
         if (!isAuth && !isLoadingIsAuth) {
@@ -84,8 +84,11 @@ export default function Snag() {
                 </Fade>
             </Modal>
             <div className={`w-[100%] overflow-y-auto h-[100vh]`}>
-                <Header handleSidebarOpen={handleSidebarOpen} />
-				<Chat isNew={false} snagDetails={snagDetails} />
+                <Header
+                    handleSidebarOpen={handleSidebarOpen}
+                    // handleFileUpload={handleFileUpload}
+                />
+                <Chat isNew={false} snagDetails={snagDetails} />
             </div>
         </div>
     );

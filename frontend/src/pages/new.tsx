@@ -10,6 +10,9 @@ import Loader from '@/components/ui/loader';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import useIsAuth from '@/hooks/useIsAuth';
+import UploadFileModal from '@/components/snag/uploadFileModal';
+import { Upload } from 'lucide-react';
+import { set } from 'date-fns';
 
 const style: SxProps<Theme> | undefined = {
     position: 'absolute',
@@ -48,6 +51,7 @@ export default function NewChat() {
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [uploadOpen, setUploadOpen] = useState(false);
 
     const handleDialogOpen = () => {
         setDialogOpen(true);
@@ -61,6 +65,9 @@ export default function NewChat() {
     };
     const handleSidebarClose = () => {
         setSidebarOpen(false);
+    };
+    const handleUploadClose = () => {
+        setUploadOpen(false);
     };
 
     useEffect(() => {
@@ -78,6 +85,7 @@ export default function NewChat() {
         checked: false,
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [file, setFile] = useState<File | null>(null);
 
     const fetchDetails = async () => {
         try {
@@ -126,6 +134,44 @@ export default function NewChat() {
         }
     };
 
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            return;
+        }
+
+        setFile(e.target.files[0]);
+        setUploadOpen(true);
+    };
+
+    // const handleFileUpload = async () => {
+    //     if (!file) {
+    //         alert('Please select a file to upload');
+    //         return;
+    //     }
+
+    //     const token = localStorage.getItem('token');
+
+    //     const data = new FormData();
+    //     data.append('excel', file);
+    //     data.append('filename', file.name);
+
+    //     try {
+    //         const res = await fetch('/api/upload', {
+    //             method: 'POST',
+    //             body: data,
+    //             headers: {
+    //                 authotization: token || '',
+    //             },
+    //         });
+
+    //         if (!res.ok) throw new Error(await res.text());
+    //         alert('Uploaded!');
+    //     } catch (err) {
+    //         console.error(err);
+    //         alert('Upload failed');
+    //     }
+    // };
+
     return (
         <div className="h-screen flex flex-col relative">
             <Modal open={isLoading} onClose={() => setIsLoading(false)}>
@@ -147,8 +193,18 @@ export default function NewChat() {
                     </Box>
                 </Fade>
             </Modal>
+            <Modal open={uploadOpen} onClose={handleUploadClose}>
+                <Fade in={true}>
+                    <Box sx={style}>
+                        <UploadFileModal selectedFile={file!} />
+                    </Box>
+                </Fade>
+            </Modal>
             <div className={`w-[100%] overflow-y-auto h-[80vh]`}>
-                <Header handleSidebarOpen={handleSidebarOpen} />
+                <Header
+                    handleSidebarOpen={handleSidebarOpen}
+                    handleFileSelect={handleFileSelect}
+                />
                 {/* <Chat
                     response={response}
                     isGenerationSuccess={isGenerationSuccess}

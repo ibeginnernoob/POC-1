@@ -104,7 +104,7 @@ router.post('/rectify', async (req, res, next) => {
 
         const generatedResData = generatedRes.data as GeneratedData;
 
-		console.log(generatedResData);
+        console.log(generatedResData);
 
         const newSnag = new Snag({
             title: 'Snag Data',
@@ -151,6 +151,40 @@ router.get('/fetch/:snagId', async (req, res, next) => {
         res.status(500).json({
             msg: 'Snag details could not be retreived',
         });
+    }
+});
+
+router.post('/upload-file', async (req, res, next) => {
+    try {
+        // const file = req.file;
+        // const fileName = req.body.fileName;
+
+        // // Create a readable stream from buffer
+        // const fileStream = Readable.from(file.buffer);
+
+        // const formData = new FormData();
+        // formData.append('excelFile', fileStream, {
+        //     filename: file.originalname,
+        //     contentType: file.mimetype,
+        // });
+        // formData.append('fileName', fileName);
+
+        // const response = await fetch(
+        //     'https://your-other-service.com/api/upload',
+        //     {
+        //         method: 'POST',
+        //         body: formData,
+        //         headers: formData.getHeaders(),
+        //     }
+        // );
+
+        // const result = await response.json();
+        // res.json(result);
+		console.log(req.body);
+		const file = req.body.file;
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to forward file' });
     }
 });
 
