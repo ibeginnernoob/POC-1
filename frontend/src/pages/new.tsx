@@ -125,7 +125,7 @@ export default function NewChat() {
                 throw new Error(res.data.msg);
             }
 
-            navigate('/new');
+            navigate(0);
             setFile(null);
             setUploadOpen(false);
 			alert('File uploaded successfully!');

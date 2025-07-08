@@ -209,4 +209,20 @@ router.post('/upload-file', async (req, res, next) => {
     req.pipe(busboy);
 });
 
+router.get('/user-files', async (req, res, next) => {
+    try {
+        const res = await axios.post(
+            `${process.env.FAST_API_URL}/send_file_names/`,
+            {
+                pb_number: req.userId,
+            }
+        );
+    } catch (e: any) {
+        console.log(e);
+        res.status(500).json({
+            msg: 'User files could not be retreived',
+        });
+    }
+});
+
 export default router;

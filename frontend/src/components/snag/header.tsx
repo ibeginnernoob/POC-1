@@ -1,5 +1,4 @@
 import { Wrench, PanelRight } from 'lucide-react';
-import { useRef } from 'react';
 
 export default function Header({
     handleSidebarOpen,

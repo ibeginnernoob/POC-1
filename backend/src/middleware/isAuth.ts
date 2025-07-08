@@ -44,6 +44,7 @@ router.use(async (req, res, next) => {
 		}
 
         req.userId = payload.userId;
+		req.pb_number = user.pb_number;
         console.log(req.userId);
         next();
     } catch (e: any) {
