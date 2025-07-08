@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import axios from 'axios';
 import Snag from '../models/snag';
+import Busboy from 'busboy';
 
 const router = Router();
 
@@ -155,37 +156,53 @@ router.get('/fetch/:snagId', async (req, res, next) => {
 });
 
 router.post('/upload-file', async (req, res, next) => {
-    try {
-        // const file = req.file;
-        // const fileName = req.body.fileName;
+    const busboy = Busboy({ headers: req.headers });
 
-        // // Create a readable stream from buffer
-        // const fileStream = Readable.from(file.buffer);
+    busboy.on('file', async (fieldname, file, info) => {
+        const { filename, encoding, mimeType } = info;
+        const chunks: Buffer[] = [];
 
-        // const formData = new FormData();
-        // formData.append('excelFile', fileStream, {
-        //     filename: file.originalname,
-        //     contentType: file.mimetype,
-        // });
-        // formData.append('fileName', fileName);
+        file.on('data', (chunk) => {
+            chunks.push(chunk);
+        });
 
-        // const response = await fetch(
-        //     'https://your-other-service.com/api/upload',
-        //     {
-        //         method: 'POST',
-        //         body: formData,
-        //         headers: formData.getHeaders(),
-        //     }
-        // );
+        file.on('end', async () => {
+            const buffer = Buffer.concat(chunks);
+            const formData = new FormData();
+            const blob = new Blob([buffer], { type: mimeType });
 
-        // const result = await response.json();
-        // res.json(result);
-		console.log(req.body);
-		const file = req.body.file;
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to forward file' });
-    }
+            if (!blob) {
+                return res.status(400).json({ error: 'Invalid file data' });
+            }
+
+            formData.append('file', blob, filename);
+
+            try {
+                const response = await fetch(
+                    'https://external-service.com/api/upload',
+                    {
+                        method: 'POST',
+                        body: formData,
+                    }
+                );
+
+                if (!response.ok || response.status !== 200) {
+                    return res
+                        .status(500)
+                        .json({ msg: 'Failed to upload file' });
+                }
+
+                const result = await response.json();
+                res.json({
+                    msg: 'File uploaded successfully',
+                });
+            } catch (error) {
+                res.status(500).json({ msg: 'Failed to forward file' });
+            }
+        });
+    });
+
+    req.pipe(busboy);
 });
 
 export default router;
