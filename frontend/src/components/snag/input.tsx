@@ -2,18 +2,20 @@ import { Send, Settings } from 'lucide-react';
 import { Textarea } from '@chakra-ui/react';
 import React, { useMemo } from 'react';
 import type { InputDetails } from '@/pages/new';
-import { Select } from '@chakra-ui/react';
+import { Select, createListCollection } from '@chakra-ui/react';
 
 export default function Input({
     handleModalOpen,
     inputValues,
     setInputValues,
     fetchDetails,
+    files,
 }: {
     handleModalOpen: () => void;
     inputValues: InputDetails;
     setInputValues: React.Dispatch<React.SetStateAction<InputDetails>>;
     fetchDetails: () => Promise<void>;
+    files: string[];
 }) {
     const validCount = useMemo(() => {
         let count = 0;
@@ -45,37 +47,13 @@ export default function Input({
         return false;
     }, [inputValues.prompt]);
 
-    const files = [
-        {
-            id: '1',
-            name: 'Document.pdf',
-            size: 102400,
-            type: 'application/pdf',
-            uploadDate: new Date(),
-        },
-        {
-            id: '2',
-            name: 'Image.png',
-            size: 204800,
-            type: 'image/png',
-            uploadDate: new Date(),
-        },
-    ];
-
-    const handleFileSelect = (fileId: string | null) => {
-        console.log('Selected file ID:', fileId);
-        setFileId(fileId || '');
-    };
-
-    const [fileId, setFileId] = React.useState<string>('');
-
     return (
         <div className="h-[20vh] pt-3 w-[100%] flex flex-col items-center gap-3 border-t-[0.5px] border-solid border-slate-200 bg-white">
-            <div className="flex flex-row items-center justify-between gap-5">
-                <div className="max-w-xl">
+            <div className="flex flex-row items-center justify-between gap-5 w-[100%] max-w-2xl px-6">
+                <div className="flex-1 mx-auto">
                     <button
                         onClick={handleModalOpen}
-                        className="w-[100%] px-3 py-2 bg-white flex flex-row items-center gap-3 text-sm font-medium border-[0.5px] border-solid border-gray-400 rounded-md"
+                        className="w-[100%] max-w-xl px-3 py-2 bg-white flex flex-row items-center gap-3 text-sm font-medium border-[0.5px] border-solid border-gray-400 rounded-md"
                     >
                         <Settings size={14} color="black" />
                         <p>Configure Snag Details</p>
@@ -84,13 +62,20 @@ export default function Input({
                         </div>
                     </button>
                 </div>
-                <div className="max-w-xl bg-red-200">
-                    <Select.Root className="w-[100%]" size="sm">
+                <div className="flex-1 mx-auto w-[100%]">
+                    <Select.Root
+                        collection={getCollection(files)}
+                        className="max-w-xl w-[100%] border-[0.5px] border-solid border-gray-400 rounded-md pl-4 text-sm font-medium"
+                        size="sm"
+                        positioning={{ placement: 'top', flip: false }}
+                    >
                         <Select.HiddenSelect />
-                        {/* <Select.Label>Select framework</Select.Label> */}
                         <Select.Control>
                             <Select.Trigger>
-                                <Select.ValueText placeholder="Select framework" />
+                                <Select.ValueText
+                                    className="text-sm font-medium"
+                                    placeholder="Select file"
+                                />
                             </Select.Trigger>
                             <Select.IndicatorGroup>
                                 <Select.Indicator />
@@ -98,9 +83,9 @@ export default function Input({
                         </Select.Control>
                         <Select.Positioner>
                             <Select.Content>
-                                {files.map((file) => (
-                                    <Select.Item item={file} key={file.name}>
-                                        {file.name}
+                                {getCollection(files).items.map((file) => (
+                                    <Select.Item item={file} key={file.value}>
+                                        {file.label}
                                         <Select.ItemIndicator />
                                     </Select.Item>
                                 ))}
@@ -138,6 +123,15 @@ export default function Input({
         </div>
     );
 }
+
+const getCollection = (items: string[]) => {
+    return createListCollection({
+        items: items.map((item) => ({
+            label: item,
+            value: item,
+        })),
+    });
+};
 
 function InputTextArea({
     inputValues,

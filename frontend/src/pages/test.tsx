@@ -1,36 +1,9 @@
-
-import FileSelector from "@/components/snag/fileSelector";
-
 export default function Test() {
-  const files = [
-	{
-	  id: "1",
-	  name: "Document.pdf",
-	  size: 102400,
-	  type: "application/pdf",
-	  uploadDate: new Date(),
-	},
-	{
-	  id: "2",
-	  name: "Image.png",
-	  size: 204800,
-	  type: "image/png",
-	  uploadDate: new Date(),
-	},
-  ];
-
-  const handleFileSelect = (fileId: string | null) => {
-	console.log("Selected file ID:", fileId);
-  };
-
-  return (
-	<div className="p-4">
-	  <FileSelector
-		files={files}
-		selectedFile={null}
-		onFileSelect={handleFileSelect}
-		placeholder="Select a file to query..."
-	  />
-	</div>
-  );
+    return (
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+            <h1 className="text-2xl font-bold text-gray-800">
+                This is a test page.
+            </h1>
+        </div>
+    );
 }

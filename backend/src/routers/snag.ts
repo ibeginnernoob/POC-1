@@ -43,6 +43,10 @@ type PrevSnag = {
     similarity_percentage: string;
 };
 
+type FetchFiles = {
+    files: string[];
+};
+
 export type GeneratedData = {
     timestamp: string;
     query: string;
@@ -180,7 +184,7 @@ router.post('/upload-file', async (req, res, next) => {
             }
 
             formData.append('file', blob, filename);
-            formData.append('pb_number', `${req.userId}`);
+            formData.append('pb_number', `${req.pb_number}`);
 
             try {
                 const response = await fetch(
@@ -211,12 +215,27 @@ router.post('/upload-file', async (req, res, next) => {
 
 router.get('/user-files', async (req, res, next) => {
     try {
-        const res = await axios.post(
+        const userId = req.userId;
+        const pb_number = req.pb_number;
+        const MLres = await axios.post(
             `${process.env.FAST_API_URL}/send_file_names/`,
             {
-                pb_number: req.userId,
+                pb_number: pb_number,
             }
         );
+
+        if (MLres.status !== 200) {
+            res.status(500).json({
+                msg: 'Failed to fetch user files',
+            });
+        }
+
+        const resData = MLres.data as FetchFiles;
+
+        res.status(200).json({
+            msg: 'User files fetched successfully',
+            files: resData.files,
+        });
     } catch (e: any) {
         console.log(e);
         res.status(500).json({

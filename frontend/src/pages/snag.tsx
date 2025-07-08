@@ -54,7 +54,6 @@ export default function Snag() {
     const navigate = useNavigate();
     const { isAuth, isLoading: isLoadingIsAuth } = useIsAuth();
     const { snagDetails, isLoading } = useFetch(snagId);
-    console.log(snagDetails);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
 

@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import useIsAuth from '@/hooks/useIsAuth';
 import UploadFileModal from '@/components/snag/uploadFileModal';
+import useFiles from '@/hooks/useFiles';
 
 const style: SxProps<Theme> | undefined = {
     position: 'absolute',
@@ -45,9 +46,10 @@ type Response = {
 
 export default function NewChat() {
     const navigate = useNavigate();
-    const { isAuth, isLoading: isLoadingIsAuth } = useIsAuth();
+    const { isAuth, isLoading: isLoadingAuthStatus } = useIsAuth();
+    const { optionFiles, isLoading: isLoadingOptionFiles } = useFiles(isAuth);
     const fileUpload = useRef<any>(null);
-    const [file, setFile] = useState<File | null>(null);
+    const [uploadFile, setUploadFile] = useState<File | null>(null);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -81,12 +83,12 @@ export default function NewChat() {
             return;
         }
         setUploadOpen(false);
-        setFile(null);
+        setUploadFile(null);
         fileUpload.current.value = null;
     };
 
     useEffect(() => {
-        if (!isAuth && !isLoadingIsAuth) {
+        if (!isAuth && !isLoadingAuthStatus) {
             navigate('/login');
         }
     }, [isAuth]);
@@ -96,23 +98,23 @@ export default function NewChat() {
             return;
         }
 
-        setFile(e.target.files[0]);
+        setUploadFile(e.target.files[0]);
         setUploadOpen(true);
     };
 
     const handleFileUpload = async () => {
-        if (!file) {
+        if (!uploadFile) {
             return;
         }
         try {
             setIsUploading(true);
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', uploadFile);
 
             const token = localStorage.getItem('token');
             const res = await axios.post(
                 // `${import.meta.env.VITE_API_URL}/snag/upload-file`,
-				'http://localhost:3000/snag/upload-file',
+                'http://localhost:3000/snag/upload-file',
                 formData,
                 {
                     headers: {
@@ -126,12 +128,12 @@ export default function NewChat() {
             }
 
             navigate(0);
-            setFile(null);
+            setUploadFile(null);
             setUploadOpen(false);
-			alert('File uploaded successfully!');
+            alert('File uploaded successfully!');
         } catch (e: any) {
             console.error(e);
-			alert(`Error uploading file`);
+            alert(`Error uploading file`);
         } finally {
             setIsUploading(false);
         }
@@ -187,7 +189,7 @@ export default function NewChat() {
     return (
         <div className="h-screen flex flex-col relative">
             <Modal
-                open={isLoading}
+                open={isLoading || isLoadingAuthStatus || isLoadingOptionFiles}
                 onClose={() => setIsLoading(false)}
                 disableEscapeKeyDown={true}
             >
@@ -217,7 +219,7 @@ export default function NewChat() {
                 <Fade in={uploadOpen}>
                     <Box sx={style}>
                         <UploadFileModal
-                            selectedFile={file!}
+                            selectedFile={uploadFile!}
                             handleUploadClose={handleUploadClose}
                             handleUploadFile={handleFileUpload}
                             isUploading={isUploading}
@@ -238,6 +240,7 @@ export default function NewChat() {
                 inputValues={inputValues}
                 setInputValues={setInputValues}
                 fetchDetails={fetchDetails}
+                files={optionFiles}
             />
         </div>
     );

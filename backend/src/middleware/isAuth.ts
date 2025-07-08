@@ -43,6 +43,8 @@ router.use(async (req, res, next) => {
 			return;
 		}
 
+		console.log(user.pb_number);
+
         req.userId = payload.userId;
 		req.pb_number = user.pb_number;
         console.log(req.userId);

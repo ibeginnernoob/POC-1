@@ -1,10 +1,4 @@
-import {
-    X,
-    Upload,
-    FileSpreadsheet,
-    AlertCircle,
-    CheckCircle,
-} from 'lucide-react';
+import { X, Upload, FileSpreadsheet, AlertCircle } from 'lucide-react';
 
 const formatFileSize = (bytes: number | undefined) => {
     if (!bytes || bytes === 0) return '0 Bytes';
