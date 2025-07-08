@@ -13,104 +13,104 @@ import { Button } from '@/components/lovable/button';
     const Analytics = () => {
         const [isLoading, setIsLoading] = useState<boolean>(false);
         const [analyticsData, setAnalyticsData] = React.useState<any>();
-        const data = {
-        "timestamp": "2025-07-02T19:29:43.963529",
-        "query": "Query: TR Vibrations\nHelicopter Type: string\nFlight Hours: string\nEvent Type: string\nStatus: string\nRaised By: string",
-        "status": "success",
-        "based_on_historical_cases": 5,
-        "analytics": {
-          "total_similar_cases_found": 5,
-          "average_similarity_percentage": 91.32,
-          "highest_similarity_percentage": 91.71,
-          "lowest_similarity_percentage": 90.58,
-          "recommendation_reliability": "high"
-        },
-        "RadarChart": [
-          {
-            "category": "Complexity",
-            "value": 3
-          },
-          {
-            "category": "TimeNeeded",
-            "value": 3
-          },
-          {
-            "category": "ToolsRequired",
-            "value": 2
-          },
-          {
-            "category": "RiskLevel",
-            "value": 2
-          },
-          {
-            "category": "Frequency",
-            "value": 4
-          }
-        ],
-        "PieChart": [
-          {
-            "category": "TR Vibration Data Analysis",
-            "value": 80
-          },
-          {
-            "category": "Tail Rotor High",
-            "value": 10
-          },
-          {
-            "category": "MR and TR Vibration Data",
-            "value": 10
-          },
-          {
-            "category": "Other",
-            "value": 10
-          }
-        ],
-        "BarChart1": [
-          {
-            "category": "PLT",
-            "value": 2
-          },
-          {
-            "category": "GR",
-            "value": 1
-          },
-          {
-            "category": "Ground Observation",
-            "value": 3
-          }
-        ],
-        "BarChart2": [
-          {
-            "category": "IA",
-            "value": 18
-          },
-          {
-            "category": "J",
-            "value": 5
-          },
-          {
-            "category": "ZD",
-            "value": 4
-          },
-          {
-            "category": "IN",
-            "value": 3
-          },
-          {
-            "category": "CG",
-            "value": 5
-          }
-        ]
-      }
+      //   const data = {
+      //   "timestamp": "2025-07-02T19:29:43.963529",
+      //   "query": "Query: TR Vibrations\nHelicopter Type: string\nFlight Hours: string\nEvent Type: string\nStatus: string\nRaised By: string",
+      //   "status": "success",
+      //   "based_on_historical_cases": 5,
+      //   "analytics": {
+      //     "total_similar_cases_found": 5,
+      //     "average_similarity_percentage": 91.32,
+      //     "highest_similarity_percentage": 91.71,
+      //     "lowest_similarity_percentage": 90.58,
+      //     "recommendation_reliability": "high"
+      //   },
+      //   "RadarChart": [
+      //     {
+      //       "category": "Complexity",
+      //       "value": 3
+      //     },
+      //     {
+      //       "category": "TimeNeeded",
+      //       "value": 3
+      //     },
+      //     {
+      //       "category": "ToolsRequired",
+      //       "value": 2
+      //     },
+      //     {
+      //       "category": "RiskLevel",
+      //       "value": 2
+      //     },
+      //     {
+      //       "category": "Frequency",
+      //       "value": 4
+      //     }
+      //   ],
+      //   "PieChart": [
+      //     {
+      //       "category": "TR Vibration Data Analysis",
+      //       "value": 80
+      //     },
+      //     {
+      //       "category": "Tail Rotor High",
+      //       "value": 10
+      //     },
+      //     {
+      //       "category": "MR and TR Vibration Data",
+      //       "value": 10
+      //     },
+      //     {
+      //       "category": "Other",
+      //       "value": 10
+      //     }
+      //   ],
+      //   "BarChart1": [
+      //     {
+      //       "category": "PLT",
+      //       "value": 2
+      //     },
+      //     {
+      //       "category": "GR",
+      //       "value": 1
+      //     },
+      //     {
+      //       "category": "Ground Observation",
+      //       "value": 3
+      //     }
+      //   ],
+      //   "BarChart2": [
+      //     {
+      //       "category": "IA",
+      //       "value": 18
+      //     },
+      //     {
+      //       "category": "J",
+      //       "value": 5
+      //     },
+      //     {
+      //       "category": "ZD",
+      //       "value": 4
+      //     },
+      //     {
+      //       "category": "IN",
+      //       "value": 3
+      //     },
+      //     {
+      //       "category": "CG",
+      //       "value": 5
+      //     }
+      //   ]
+      // }
 
       const fetchDetails = async () => {
         try {
           setIsLoading(true);
           const token = localStorage.getItem('token');
-      
-          const res = await axios.post('http://192.168.2.53:7000/analytics',
+            
+          const verify = await axios.post('http://192.168.2.53:7000/verify',
             {
-              query: "TR Vibrations",
+              query: "",
               helicopter_type: "",
               flight_hours: "",
               event_type: "",
@@ -120,25 +120,46 @@ import { Button } from '@/components/lovable/button';
             {
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,  // Optional unless used
+                'Authorization': `Bearer ${token}`, 
               }
             }
           );
-      
-          interface Response {
-            msg: string;
-            // Include actual fields for proper type safety
+          console.log(verify.data)
+          if (verify.data.result == "Yes"){
+            const res = await axios.post('http://192.168.2.53:7000/analytics',
+                {
+                  query: "TR Vibrations",
+                  helicopter_type: "",
+                  flight_hours: "",
+                  event_type: "",
+                  status: "",
+                  raised_by: ""
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, 
+                  }
+                }
+              );
+          
+              interface Response {
+                msg: string;
+              }
+          
+              const resBody = res.data as Response;
+              setAnalyticsData(resBody);
+              console.log(resBody);
+          
+              if (res.status !== 200) {
+                throw new Error(resBody.msg);
           }
-      
-          const resBody = res.data as Response;
-          setAnalyticsData(resBody);
-          console.log(resBody);
-      
-          if (res.status !== 200) {
-            throw new Error(resBody.msg);
+          else {
+            return;
+          }
           }
         } catch (e: any) {
-          setAnalyticsData(data); // Fallback if needed
+          // setAnalyticsData(data);
           console.error('Error:', e);
       
           if (e.response) {
@@ -236,12 +257,14 @@ import { Button } from '@/components/lovable/button';
                                     Total Similar Cases
                                 </span>
                             </h2>
-                            <BarStatsChart
-                                data={[{ category: 'Cases', value: analyticsData.analytics.total_similar_cases_found }]}
-                                color="#f97316"
-                                height={200}
-                                gradient={true}
-                            />
+                            {analyticsData?.analytics &&
+                                <BarStatsChart
+                                    data={[{ category: 'Cases', value: analyticsData.analytics.total_similar_cases_found }]}
+                                    color="#f97316"
+                                    height={200}
+                                    gradient={true}
+                                />
+                                }
                         </div>
                     </div>
     

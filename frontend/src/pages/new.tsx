@@ -83,42 +83,62 @@ export default function NewChat() {
         try {
             setIsLoading(true);
             const token = localStorage.getItem('token');
-            const res = await axios.post(
-                'http://localhost:3000/snag/rectify',
+            const verify = await axios.post('http://192.168.2.53:7000/verify',
                 {
-                    query: inputValues.prompt,
-                    helicopter_type: inputValues.type,
-                    event_type: inputValues.event,
-                    isChecked: inputValues.checked,
-                    flight_hours: {
-                        lower: inputValues.hours[0],
-                        upper: inputValues.hours[1],
-                    },
-                    raised_by: inputValues.raised_by,
+                  query: "MR vibration",
+                  helicopter_type: "",
+                  flight_hours: "",
+                  event_type: "",
+                  status: "",
+                  raised_by: ""
                 },
                 {
-                    headers: {
-                        authorization: token,
-                    },
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,  // Optional unless used
+                  }
                 }
-            );
-
-            const resBody = res.data as Response;
-
-            if (res.status !== 200) {
-                throw new Error(resBody.msg);
+              );
+              console.log(verify.data)
+              if (verify.data.result ==="Yes"){          
+                const res = await axios.post(
+                    'http://localhost:3000/snag/rectify',
+                    {
+                        query: inputValues.prompt,
+                        helicopter_type: inputValues.type,
+                        event_type: inputValues.event,
+                        isChecked: inputValues.checked,
+                        flight_hours: {
+                            lower: inputValues.hours[0],
+                            upper: inputValues.hours[1],
+                        },
+                        raised_by: inputValues.raised_by,
+                    },
+                    {
+                        headers: {
+                            authorization: token,
+                        },
+                    }
+                );
+    
+                const resBody = res.data as Response;
+    
+                if (res.status !== 200) {
+                    throw new Error(resBody.msg);
+                }
+    
+                navigate(`/snag/${resBody.snagId}`);
+    
+                setInputValues({
+                    prompt: '',
+                    type: null,
+                    event: null,
+                    raised_by: null,
+                    hours: [0, 2000],
+                    checked: false,
+                });
             }
-
-            navigate(`/snag/${resBody.snagId}`);
-
-            setInputValues({
-                prompt: '',
-                type: null,
-                event: null,
-                raised_by: null,
-                hours: [0, 2000],
-                checked: false,
-            });
+           
         } catch (e: any) {
             console.log(e);
         } finally {
