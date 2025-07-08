@@ -156,6 +156,10 @@ router.get('/fetch/:snagId', async (req, res, next) => {
 });
 
 router.post('/upload-file', async (req, res, next) => {
+    if (!req.userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+
     const busboy = Busboy({ headers: req.headers });
 
     busboy.on('file', async (fieldname, file, info) => {
@@ -176,10 +180,11 @@ router.post('/upload-file', async (req, res, next) => {
             }
 
             formData.append('file', blob, filename);
+            formData.append('pb_number', `${req.userId}`);
 
             try {
                 const response = await fetch(
-                    'https://external-service.com/api/upload',
+                    `${process.env.FAST_API_URL}/store_file`,
                     {
                         method: 'POST',
                         body: formData,
@@ -192,7 +197,6 @@ router.post('/upload-file', async (req, res, next) => {
                         .json({ msg: 'Failed to upload file' });
                 }
 
-                const result = await response.json();
                 res.json({
                     msg: 'File uploaded successfully',
                 });
