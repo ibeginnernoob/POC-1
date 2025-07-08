@@ -244,4 +244,41 @@ router.get('/user-files', async (req, res, next) => {
     }
 });
 
+router.post('/fetch-cols', async (req, res, next) => {
+    try {
+        const pb_number = req.pb_number;
+
+        if (!req.body.filename || req.body.filename.length === 0) {
+            res.status(404).json({
+                msg: 'Filename not provided',
+            });
+        }
+
+        const MLres = await axios.post(
+            `${process.env.FAST_API_URL}/get_unique_row/`,
+            {
+                pb_number: pb_number,
+                filename: req.body.filename,
+            }
+        );
+
+        if (MLres.status !== 200) {
+            res.status(500).json({
+                msg: 'Columns from file could not be fetched',
+            });
+            return;
+        }
+
+        res.status(200).json({
+            msg: 'Columns fetched successfully',
+            columns: MLres.data,
+        });
+    } catch (e: any) {
+        console.log(e);
+        res.status(500).json({
+            msg: 'Columns could not be fetched',
+        });
+    }
+});
+
 export default router;

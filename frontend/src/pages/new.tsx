@@ -50,21 +50,23 @@ export default function NewChat() {
     const { optionFiles, isLoading: isLoadingOptionFiles } = useFiles(isAuth);
     const fileUpload = useRef<any>(null);
     const [uploadFile, setUploadFile] = useState<File | null>(null);
+    const [selectedFiles, setSelectedFiles] = useState<string[]>(['default']);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [uploadOpen, setUploadOpen] = useState(false);
-    const [inputValues, setInputValues] = useState<InputDetails>({
-        prompt: '',
-        type: null,
-        event: null,
-        raised_by: null,
-        hours: [0, 2000],
-        checked: false,
-    });
+
+    const [dialogValues, setDialogValues] = useState<any>({});
+    const [query, setQuery] = useState<string>('');
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isUploading, setIsUploading] = useState<boolean>(false);
 
+    const handleSetQuery = (value: string) => {
+        setQuery(value);
+    };
+
+    // details dialog
     const handleDialogOpen = () => {
         setDialogOpen(true);
     };
@@ -72,12 +74,21 @@ export default function NewChat() {
         setDialogOpen(false);
     };
 
+    // sidebar
     const handleSidebarOpen = () => {
         setSidebarOpen(true);
     };
     const handleSidebarClose = () => {
         setSidebarOpen(false);
     };
+
+    useEffect(() => {
+        if (!isAuth && !isLoadingAuthStatus) {
+            navigate('/login');
+        }
+    }, [isAuth]);
+
+    // file uploader
     const handleUploadClose = () => {
         if (isUploading) {
             return;
@@ -87,13 +98,7 @@ export default function NewChat() {
         fileUpload.current.value = null;
     };
 
-    useEffect(() => {
-        if (!isAuth && !isLoadingAuthStatus) {
-            navigate('/login');
-        }
-    }, [isAuth]);
-
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUploadFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) {
             return;
         }
@@ -139,23 +144,28 @@ export default function NewChat() {
         }
     };
 
+    const handleFileOptionSelect = (e: any) => {
+        console.log(e);
+        setSelectedFiles([e.value[0]]);
+    };
+
     const fetchDetails = async () => {
         try {
             setIsLoading(true);
             const token = localStorage.getItem('token');
             const res = await axios.post(
                 'http://localhost:3000/snag/rectify',
-                {
-                    query: inputValues.prompt,
-                    helicopter_type: inputValues.type,
-                    event_type: inputValues.event,
-                    isChecked: inputValues.checked,
-                    flight_hours: {
-                        lower: inputValues.hours[0],
-                        upper: inputValues.hours[1],
-                    },
-                    raised_by: inputValues.raised_by,
-                },
+                // {
+                //     query: inputValues.prompt,
+                //     helicopter_type: inputValues.type,
+                //     event_type: inputValues.event,
+                //     isChecked: inputValues.checked,
+                //     flight_hours: {
+                //         lower: inputValues.hours[0],
+                //         upper: inputValues.hours[1],
+                //     },
+                //     raised_by: inputValues.raised_by,
+                // },
                 {
                     headers: {
                         authorization: token,
@@ -171,14 +181,14 @@ export default function NewChat() {
 
             navigate(`/snag/${resBody.snagId}`);
 
-            setInputValues({
-                prompt: '',
-                type: null,
-                event: null,
-                raised_by: null,
-                hours: [0, 2000],
-                checked: false,
-            });
+            // setInputValues({
+            //     prompt: '',
+            //     type: null,
+            //     event: null,
+            //     raised_by: null,
+            //     hours: [0, 2000],
+            //     checked: false,
+            // });
         } catch (e: any) {
             console.log(e);
         } finally {
@@ -198,9 +208,10 @@ export default function NewChat() {
             <Modal open={dialogOpen} onClose={handleDialogClose}>
                 <Box sx={style}>
                     <DetailsDialog
-                        inputValues={inputValues}
-                        setInputValues={setInputValues}
+                        dialogValues={dialogValues}
+                        setDialogValues={setDialogValues}
                         handleClose={handleDialogClose}
+                        selectedFile={selectedFiles[0]}
                     />
                 </Box>
             </Modal>
@@ -230,17 +241,19 @@ export default function NewChat() {
             <div className={`w-[100%] overflow-y-auto h-[80vh]`}>
                 <Header
                     handleSidebarOpen={handleSidebarOpen}
-                    handleFileSelect={handleFileSelect}
+                    handleFileSelect={handleUploadFileSelect}
                     fileUploadRef={fileUpload}
                     isNew={true}
                 />
             </div>
             <Input
                 handleModalOpen={handleDialogOpen}
-                inputValues={inputValues}
-                setInputValues={setInputValues}
+                query={query}
+                handleSetQuery={handleSetQuery}
                 fetchDetails={fetchDetails}
                 files={optionFiles}
+                selectedFile={selectedFiles}
+                handleSelectFile={handleFileOptionSelect}
             />
         </div>
     );

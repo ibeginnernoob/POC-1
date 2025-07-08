@@ -1,51 +1,52 @@
 import { Send, Settings } from 'lucide-react';
 import { Textarea } from '@chakra-ui/react';
-import React, { useMemo } from 'react';
-import type { InputDetails } from '@/pages/new';
 import { Select, createListCollection } from '@chakra-ui/react';
 
 export default function Input({
     handleModalOpen,
-    inputValues,
-    setInputValues,
-    fetchDetails,
+    query,
+    handleSetQuery,
     files,
+    selectedFile,
+    handleSelectFile,
 }: {
     handleModalOpen: () => void;
-    inputValues: InputDetails;
-    setInputValues: React.Dispatch<React.SetStateAction<InputDetails>>;
+    query: string;
+    handleSetQuery: (value: string) => void;
     fetchDetails: () => Promise<void>;
     files: string[];
+    selectedFile: string[];
+    handleSelectFile: (e: any) => void;
 }) {
-    const validCount = useMemo(() => {
-        let count = 0;
-        if (inputValues.type) {
-            count += 1;
-        }
-        if (inputValues.event) {
-            count += 1;
-        }
-        if (inputValues.raised_by) {
-            count += 1;
-        }
-        if (inputValues.checked && inputValues.checked === true) {
-            count += 1;
-        }
-        return count;
-    }, [
-        inputValues.event,
-        inputValues.type,
-        inputValues.raised_by,
-        inputValues.hours,
-        inputValues.checked,
-    ]);
+    // const validCount = useMemo(() => {
+    //     let count = 0;
+    //     if (inputValues.type) {
+    //         count += 1;
+    //     }
+    //     if (inputValues.event) {
+    //         count += 1;
+    //     }
+    //     if (inputValues.raised_by) {
+    //         count += 1;
+    //     }
+    //     if (inputValues.checked && inputValues.checked === true) {
+    //         count += 1;
+    //     }
+    //     return count;
+    // }, [
+    //     inputValues.event,
+    //     inputValues.type,
+    //     inputValues.raised_by,
+    //     inputValues.hours,
+    //     inputValues.checked,
+    // ]);
 
-    const isDisabled: boolean = useMemo(() => {
-        if (inputValues.prompt.length === 0) {
-            return true;
-        }
-        return false;
-    }, [inputValues.prompt]);
+    // const isDisabled: boolean = useMemo(() => {
+    //     if (inputValues.prompt.length === 0) {
+    //         return true;
+    //     }
+    //     return false;
+    // }, [inputValues.prompt]);
 
     return (
         <div className="h-[20vh] pt-3 w-[100%] flex flex-col items-center gap-3 border-t-[0.5px] border-solid border-slate-200 bg-white">
@@ -58,7 +59,7 @@ export default function Input({
                         <Settings size={14} color="black" />
                         <p>Configure Snag Details</p>
                         <div className="p-1 h-5 w-5 rounded-full bg-gray-300 flex justify-center items-center">
-                            <p className="text-xs font-light">{validCount}</p>
+                            <p className="text-xs font-light">{0}</p>
                         </div>
                     </button>
                 </div>
@@ -68,6 +69,8 @@ export default function Input({
                         className="max-w-xl w-[100%] border-[0.5px] border-solid border-gray-400 rounded-md pl-4 text-sm font-medium"
                         size="sm"
                         positioning={{ placement: 'top', flip: false }}
+                        value={selectedFile || ''}
+                        onValueChange={handleSelectFile}
                     >
                         <Select.HiddenSelect />
                         <Select.Control>
@@ -97,19 +100,21 @@ export default function Input({
             <div className="bg-white w-[100%] flex flex-col justify-center items-center gap-1">
                 <div className="flex-1 flex flex-row gap-3 justify-center items-start w-[100%] max-w-4xl px-5">
                     <InputTextArea
-                        inputValues={inputValues}
-                        setInputValues={setInputValues}
+                        query={query}
+                        handleSetQuery={handleSetQuery}
                     />
                     <button
                         onClick={async () => {
-                            await fetchDetails();
+                            // await fetchDetails();
                         }}
-                        disabled={isDisabled}
-                        className={`p-3 rounded-md bg-black flex justify-center items-center ${
-                            isDisabled
-                                ? 'opacity-60'
-                                : 'hover:opacity-60 duration-200'
-                        }`}
+                        // disabled={isDisabled}
+                        className={
+                            `p-3 rounded-md bg-black flex justify-center items-center` // ${
+                            // isDisabled
+                            //     ? 'opacity-60'
+                            //     : 'hover:opacity-60 duration-200'
+                            // }`
+                        }
                     >
                         <Send size={20} color="white" />
                     </button>
@@ -125,32 +130,34 @@ export default function Input({
 }
 
 const getCollection = (items: string[]) => {
-    return createListCollection({
+    const collection = createListCollection({
         items: items.map((item) => ({
             label: item,
             value: item,
         })),
     });
+
+    collection.items.push({
+        label: 'default',
+        value: 'default',
+    });
+
+    return collection;
 };
 
 function InputTextArea({
-    inputValues,
-    setInputValues,
+    query,
+    handleSetQuery,
 }: {
-    inputValues: InputDetails;
-    setInputValues: React.Dispatch<React.SetStateAction<InputDetails>>;
+    query: string;
+    handleSetQuery: (value: string) => void;
 }) {
     return (
         <Textarea
             className="max-w-3xl py-2 px-3 border border-solid border-gray-300 rounded-lg text-sm"
-            value={inputValues.prompt}
+            value={query}
             onChange={(e) => {
-                setInputValues((prevState) => {
-                    return {
-                        ...prevState,
-                        prompt: e.target.value,
-                    };
-                });
+                handleSetQuery(e.target.value);
             }}
             placeholder="Describe your snag issue ..."
             maxH="3lh"
