@@ -1,11 +1,5 @@
-import React from 'react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
+import React from "react";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 type PieChartItem = {
   category: string;
@@ -13,11 +7,19 @@ type PieChartItem = {
 };
 
 type Props = {
-  data?: PieChartItem[];  // <- make data optional to avoid hard crash
+  data?: PieChartItem[]; // <- make data optional to avoid hard crash
 };
 
 export function PieStatsChart({ data }: Props): JSX.Element {
-  const COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+  const COLORS = [
+    "#ff6b6b",
+    "#4ecdc4",
+    "#45b7d1",
+    "#96ceb4",
+    "#feca57",
+    "#ff9ff3",
+    "#54a0ff",
+  ];
 
   // Handle undefined or empty data
   if (!data || data.length === 0) {
@@ -44,17 +46,20 @@ export function PieStatsChart({ data }: Props): JSX.Element {
             labelLine={false}
           >
             {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
             ))}
           </Pie>
           <Tooltip
             formatter={(value, name) => [`${value}%`, name]}
             labelFormatter={(label) => `Category: ${label}`}
             contentStyle={{
-              backgroundColor: 'pink',
-              border: 'none',
-              borderRadius: '8px',
-              color: 'white'
+              backgroundColor: "pink",
+              border: "none",
+              borderRadius: "8px",
+              color: "white",
             }}
           />
         </PieChart>
