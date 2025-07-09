@@ -10,24 +10,6 @@ import Loader from '@/components/ui/loader';
 import { useNavigate } from 'react-router';
 import useFetch from '@/hooks/useFetch';
 
-const sidebarStyles: SxProps<Theme> | undefined = {
-    position: 'absolute',
-    left: 0,
-    bgcolor: 'background.paper',
-    boxShadow: 10,
-};
-
-export type GeneratedData = {
-    userId?: string;
-    timestamp: string;
-    query: string;
-    rectification: {
-        ai_recommendation: string;
-        based_on_historical_cases: string;
-    };
-    similar_historical_snags: any[];
-};
-
 export default function Snag() {
     const { snagId } = useParams();
 
@@ -52,7 +34,7 @@ export default function Snag() {
 
     if (isLoading || isLoadingIsAuth) {
         return (
-            <div>
+            <div className="h-screen w-screen flex justify-center items-center bg-white">
                 <Loader />
             </div>
         );
@@ -72,8 +54,15 @@ export default function Snag() {
             </Modal>
             <div className={`w-[100%] overflow-y-auto h-[100vh]`}>
                 <Header handleSidebarOpen={handleSidebarOpen} isNew={false} />
-                <Chat isNew={false} snagDetails={snagDetails} />
+                <Chat snagDetails={snagDetails} isNew={false} />
             </div>
         </div>
     );
 }
+
+const sidebarStyles: SxProps<Theme> | undefined = {
+    position: 'absolute',
+    left: 0,
+    bgcolor: 'background.paper',
+    boxShadow: 10,
+};

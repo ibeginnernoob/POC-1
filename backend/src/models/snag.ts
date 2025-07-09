@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose';
 
 const snagSchema = new Schema({
-	userId: {
-		type: Schema.Types.ObjectId,
+    userId: {
+        type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true
-	},
+        required: true,
+    },
     timestamp: {
         type: String,
         required: true,

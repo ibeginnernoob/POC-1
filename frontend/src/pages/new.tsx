@@ -36,15 +36,21 @@ export default function NewChat() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isUploading, setIsUploading] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (!isAuth && !isLoadingAuthStatus) {
+            navigate('/login');
+        }
+    }, [isAuth, isLoadingAuthStatus]);
+
     const handleSetQuery = (value: string) => {
         setQuery(value);
     };
 
     // details dialog
-    const handleDialogOpen = () => {
+    const handleDetailsDialogOpen = () => {
         setDialogOpen(true);
     };
-    const handleDialogClose = () => {
+    const handleDetailsDialogClose = () => {
         setDialogOpen(false);
     };
 
@@ -55,12 +61,6 @@ export default function NewChat() {
     const handleSidebarClose = () => {
         setSidebarOpen(false);
     };
-
-    useEffect(() => {
-        if (!isAuth && !isLoadingAuthStatus) {
-            navigate('/login');
-        }
-    }, [isAuth, isLoadingAuthStatus]);
 
     // file uploader
     const handleUploadClose = () => {
@@ -121,9 +121,9 @@ export default function NewChat() {
     };
 
     const handleFileOptionSelect = (e: {
-		value: string[]
-		label: string[]
-	}) => {        
+        value: string[];
+        label: string[];
+    }) => {
         setSelectedFiles([e.value[0]]);
         setDialogValues({});
     };
@@ -133,11 +133,16 @@ export default function NewChat() {
             setIsLoading(true);
             const token = localStorage.getItem('token');
 
-            if (selectedFiles.length === 0) {
+            if (selectedFiles.length === 0 || query.length === 0) {
+                if (selectedFiles.length) {
+                    alert('Please select a file');
+                }
+                if (query.length === 0) {
+                    alert('Please enter your query/snag');
+                }
+
                 return;
             }
-
-            console.log(selectedFiles[0]);
 
             const properties = Object.entries(dialogValues)
                 .map(([key, value]) => `${key}:${value}`)
@@ -159,7 +164,6 @@ export default function NewChat() {
             );
 
             const resBody = res.data as Response;
-
             if (res.status !== 200) {
                 throw new Error(resBody.msg);
             }
@@ -168,6 +172,7 @@ export default function NewChat() {
             setDialogValues({});
         } catch (e: any) {
             console.log(e);
+            alert(e.message || e.msg || 'Some error occured');
         } finally {
             setIsLoading(false);
         }
@@ -182,12 +187,12 @@ export default function NewChat() {
             >
                 <Loader />
             </Modal>
-            <Modal open={dialogOpen} onClose={handleDialogClose}>
+            <Modal open={dialogOpen} onClose={handleDetailsDialogClose}>
                 <Box sx={style}>
                     <DetailsDialog
                         dialogValues={dialogValues}
                         setDialogValues={setDialogValues}
-                        handleClose={handleDialogClose}
+                        handleClose={handleDetailsDialogClose}
                         selectedFile={selectedFiles[0]}
                     />
                 </Box>
@@ -222,9 +227,10 @@ export default function NewChat() {
                     fileUploadRef={fileUpload}
                     isNew={true}
                 />
+				<Chat isNew={true} />
             </div>
             <Input
-                handleModalOpen={handleDialogOpen}
+                handleModalOpen={handleDetailsDialogOpen}
                 query={query}
                 handleSetQuery={handleSetQuery}
                 fetchDetails={fetchDetails}
