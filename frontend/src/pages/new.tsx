@@ -120,7 +120,10 @@ export default function NewChat() {
         }
     };
 
-    const handleFileOptionSelect = (e: any) => {        
+    const handleFileOptionSelect = (e: {
+		value: string[]
+		label: string[]
+	}) => {        
         setSelectedFiles([e.value[0]]);
         setDialogValues({});
     };
