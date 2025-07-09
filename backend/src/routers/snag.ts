@@ -5,42 +5,9 @@ import Busboy from 'busboy';
 
 const router = Router();
 
-type FrontendReqPayload = {
-    query: string;
-    helicopter_type?: string;
-    event_type?: string;
-    raised_by?: string;
-    isChecked: boolean;
-    flight_hours?: {
-        upper: string;
-        lower: string;
-    };
-};
-
-type MLreqPayload = {
-    query: string;
-    helicopter_type?: string;
-    event_type?: string;
-    raised_by?: string;
-    flight_hours?: {
-        upper: string;
-        lower: string;
-    };
-};
-
-type PrevSnag = {
-    rank: string;
-    snag: string;
-    rectification: string;
-    metadata: {
-        helicopter: string;
-        raised_by: string;
-        category: string;
-        snag_date: string;
-        rectified_on: string;
-    };
-    similarity_score: string;
-    similarity_percentage: string;
+type ReqPayload = {
+    filename: string;
+    prompt: string;
 };
 
 type FetchFiles = {
@@ -48,81 +15,79 @@ type FetchFiles = {
 };
 
 export type GeneratedData = {
+    userId?: string;
     timestamp: string;
     query: string;
     rectification: {
         ai_recommendation: string;
-        based_on_historical_case: string;
+        based_on_historical_cases: string;
     };
-    similar_historical_snags: PrevSnag[];
-    summary: {
-        total_similar_cases_found: string;
-        average_similarity_percentage: string;
-        highest_similarity_percentage: string;
-        lowest_similarity_percentage: string;
-    };
+    similar_historical_snags: any[];
 };
 
 router.post('/rectify', async (req, res, next) => {
     try {
         console.log(req.userId);
-        console.log(req.body);
+        console.log(req.pb_number);
 
-        const reqBody = req.body as FrontendReqPayload;
+        const reqBody: ReqPayload = req.body;
 
-        let MLreqPayload: MLreqPayload = {
-            query: reqBody.query,
-        };
+        const prompt = reqBody.prompt;
+        const filename = reqBody.filename;
 
-        if (reqBody.helicopter_type && reqBody.helicopter_type.length > 0) {
-            MLreqPayload = {
-                ...MLreqPayload,
-                helicopter_type: reqBody.helicopter_type,
-            };
-        }
-        if (reqBody.event_type && reqBody.event_type.length > 0) {
-            MLreqPayload = {
-                ...MLreqPayload,
-                event_type: reqBody.event_type,
-            };
-        }
-        if (reqBody.raised_by && reqBody.raised_by.length > 0) {
-            MLreqPayload = {
-                ...MLreqPayload,
-                event_type: reqBody.event_type,
-            };
-        }
-        if (reqBody.isChecked && reqBody.flight_hours) {
-            MLreqPayload = {
-                ...MLreqPayload,
-                flight_hours: {
-                    upper: reqBody.flight_hours.upper,
-                    lower: reqBody.flight_hours.lower,
-                },
-            };
+        if (!filename || filename.length === 0) {
+            res.json({
+                msg: 'No file provided!',
+            });
+            return;
         }
 
-        const generatedRes = await axios.post(
-            `${process.env.FAST_API_URL}/rectify`,
-            MLreqPayload
-        );
+        let generatedRes = null;
 
-        const generatedResData = generatedRes.data as GeneratedData;
+        if (filename === 'default') {
+            const MLreqPayload = {
+                query: prompt,
+            };
 
-        console.log(generatedResData);
+            console.log(MLreqPayload);
 
-        const newSnag = new Snag({
-            title: 'Snag Data',
-            details: reqBody,
-            generated: generatedResData,
-        });
+            generatedRes = await axios.post(
+                `${process.env.FAST_API_URL}/rectify-file`,
+                MLreqPayload
+            );
+        } else {
+            const MLreqPayload = {
+                query: prompt,
+                file_name: filename,
+                pb_number: req.pb_number?.toString(),
+            };
 
-        const DBres = await newSnag.save();
-        console.log(DBres);
+            console.log(MLreqPayload);
+
+            generatedRes = await axios.post(
+                `${process.env.FAST_API_URL}/rectify-file`,
+                MLreqPayload
+            );
+        }
+
+        if (!generatedRes || generatedRes.status !== 200) {
+            res.json({
+                msg: 'Could not generate!',
+            });
+        }
+
+        const generatedData = generatedRes.data as GeneratedData;
+        generatedData.userId = req.userId;
+
+        console.log(generatedData);
+
+        const newSnag = new Snag(generatedData);
+
+        const DBRes = await newSnag.save();
 
         res.status(200).json({
-            msg: 'Data successfully generated!',
-            snagId: DBres._id,
+            msg: 'Works!',
+            snagId: DBRes._id,
         });
     } catch (e: any) {
         console.log(e);
@@ -223,6 +188,8 @@ router.get('/user-files', async (req, res, next) => {
                 pb_number: pb_number,
             }
         );
+
+        console.log(process.env.FAST_API_URL);
 
         if (MLres.status !== 200) {
             res.status(500).json({

@@ -13,32 +13,6 @@ import useIsAuth from '@/hooks/useIsAuth';
 import UploadFileModal from '@/components/snag/uploadFileModal';
 import useFiles from '@/hooks/useFiles';
 
-const style: SxProps<Theme> | undefined = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    bgcolor: 'background.paper',
-    boxShadow: 10,
-    borderRadius: 8,
-};
-
-const sidebarStyles: SxProps<Theme> | undefined = {
-    position: 'absolute',
-    left: 0,
-    bgcolor: 'background.paper',
-    boxShadow: 10,
-};
-
-export type InputDetails = {
-    prompt: string;
-    type: string | null;
-    event: string | null;
-    raised_by: string | null;
-    hours: number[];
-    checked: boolean;
-};
-
 type Response = {
     snagId?: string;
     msg: string;
@@ -86,7 +60,7 @@ export default function NewChat() {
         if (!isAuth && !isLoadingAuthStatus) {
             navigate('/login');
         }
-    }, [isAuth]);
+    }, [isAuth, isLoadingAuthStatus]);
 
     // file uploader
     const handleUploadClose = () => {
@@ -118,7 +92,6 @@ export default function NewChat() {
 
             const token = localStorage.getItem('token');
             const res = await axios.post(
-                // `${import.meta.env.VITE_API_URL}/snag/upload-file`,
                 'http://localhost:3000/snag/upload-file',
                 formData,
                 {
@@ -133,39 +106,48 @@ export default function NewChat() {
             }
 
             navigate(0);
-            setUploadFile(null);
-            setUploadOpen(false);
-            alert('File uploaded successfully!');
+            handleUploadClose();
+            alert('File uploaded successful');
         } catch (e: any) {
             console.error(e);
-            alert(`Error uploading file`);
+            alert(
+                `Error uploading file: ${
+                    e.msg || e.message || 'Could not identify error'
+                }`
+            );
         } finally {
             setIsUploading(false);
         }
     };
 
-    const handleFileOptionSelect = (e: any) => {
-        console.log(e);
+    const handleFileOptionSelect = (e: any) => {        
         setSelectedFiles([e.value[0]]);
+        setDialogValues({});
     };
 
     const fetchDetails = async () => {
         try {
             setIsLoading(true);
             const token = localStorage.getItem('token');
+
+            if (selectedFiles.length === 0) {
+                return;
+            }
+
+            console.log(selectedFiles[0]);
+
+            const properties = Object.entries(dialogValues)
+                .map(([key, value]) => `${key}:${value}`)
+                .join(', ');
+
+            let prompt = `query: ${query} \n ${properties}`;
+
             const res = await axios.post(
                 'http://localhost:3000/snag/rectify',
-                // {
-                //     query: inputValues.prompt,
-                //     helicopter_type: inputValues.type,
-                //     event_type: inputValues.event,
-                //     isChecked: inputValues.checked,
-                //     flight_hours: {
-                //         lower: inputValues.hours[0],
-                //         upper: inputValues.hours[1],
-                //     },
-                //     raised_by: inputValues.raised_by,
-                // },
+                {
+                    filename: selectedFiles[0],
+                    prompt: prompt,
+                },
                 {
                     headers: {
                         authorization: token,
@@ -180,15 +162,7 @@ export default function NewChat() {
             }
 
             navigate(`/snag/${resBody.snagId}`);
-
-            // setInputValues({
-            //     prompt: '',
-            //     type: null,
-            //     event: null,
-            //     raised_by: null,
-            //     hours: [0, 2000],
-            //     checked: false,
-            // });
+            setDialogValues({});
         } catch (e: any) {
             console.log(e);
         } finally {
@@ -258,3 +232,20 @@ export default function NewChat() {
         </div>
     );
 }
+
+const style: SxProps<Theme> | undefined = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 10,
+    borderRadius: 8,
+};
+
+const sidebarStyles: SxProps<Theme> | undefined = {
+    position: 'absolute',
+    left: 0,
+    bgcolor: 'background.paper',
+    boxShadow: 10,
+};

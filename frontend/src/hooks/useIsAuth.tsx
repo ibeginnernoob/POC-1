@@ -44,7 +44,7 @@ const useIsAuth = () => {
         };
 
         checkAuth();
-    });
+    }, []);
 
     return {
         isLoading,

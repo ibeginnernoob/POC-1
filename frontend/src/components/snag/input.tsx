@@ -6,6 +6,7 @@ export default function Input({
     handleModalOpen,
     query,
     handleSetQuery,
+	fetchDetails,
     files,
     selectedFile,
     handleSelectFile,
@@ -105,7 +106,7 @@ export default function Input({
                     />
                     <button
                         onClick={async () => {
-                            // await fetchDetails();
+                            await fetchDetails();
                         }}
                         // disabled={isDisabled}
                         className={

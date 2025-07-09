@@ -17,35 +17,15 @@ const sidebarStyles: SxProps<Theme> | undefined = {
     boxShadow: 10,
 };
 
-type PrevSnag = {
-    rank: string;
-    content: string;
-    metadata: {
-        helicopter: string;
-        raised_by: string;
-        event: string;
-        snag_date: string;
-        rectified_on: string;
-    };
-    similarity_score: string;
-    similarity_percentage: string;
-};
-
 export type GeneratedData = {
+    userId?: string;
     timestamp: string;
     query: string;
-    status: string;
     rectification: {
         ai_recommendation: string;
         based_on_historical_cases: string;
     };
-    similar_historical_snags: PrevSnag[];
-    summary: {
-        total_similar_cases_found: string;
-        average_similarity_percentage: string;
-        highest_similarity_percentage: string;
-        lowest_similarity_percentage: string;
-    };
+    similar_historical_snags: any[];
 };
 
 export default function Snag() {
@@ -69,6 +49,14 @@ export default function Snag() {
             navigate('/login');
         }
     }, [isAuth]);
+
+    if (isLoading || isLoadingIsAuth) {
+        return (
+            <div>
+                <Loader />
+            </div>
+        );
+    }
 
     return (
         <div className="h-screen flex flex-col relative">

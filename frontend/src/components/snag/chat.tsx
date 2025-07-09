@@ -1,6 +1,6 @@
 import { Bot, User } from "lucide-react";
 import { type GeneratedData } from "@/pages/snag";
-import { type SnagQueryData } from "@/hooks/useFetch";
+// import { type SnagQueryData } from "@/hooks/useFetch";
 import type { SnagDetails } from "@/hooks/useFetch";
 import Markdown from "react-markdown";
 
@@ -17,8 +17,8 @@ export default function Chat({
         {isNew && <Message details={null} />}
         {!isNew && snagDetails && (
           <>
-            <UserMessage details={snagDetails.details} />
-            <Message details={snagDetails.generated} />
+            {/* <UserMessage details={snagDetails.details} /> */}
+            <Message details={snagDetails} />
           </>
         )}
       </div>
@@ -73,15 +73,15 @@ function Message({ details }: { details: GeneratedData | null }) {
   );
 }
 
-function UserMessage({ details }: { details: SnagQueryData }) {
-  return (
-    <div className="flex flex-row justify-end items-start gap-1">
-      <div className="max-w-2xl flex flex-col flex-start bg-green-200">
-        <p className="text-sm font-medium">{details.query}</p>
-      </div>
-      <div className="rounded-full p-2 bg-black">
-        <User size={14} color="white" />
-      </div>
-    </div>
-  );
-}
+// function UserMessage({ details }: { details: SnagQueryData }) {
+//   return (
+//     <div className="flex flex-row justify-end items-start gap-1">
+//       <div className="max-w-2xl flex flex-col flex-start bg-green-200">
+//         <p className="text-sm font-medium">{details.query}</p>
+//       </div>
+//       <div className="rounded-full p-2 bg-black">
+//         <User size={14} color="white" />
+//       </div>
+//     </div>
+//   );
+// }

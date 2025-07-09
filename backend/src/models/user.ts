@@ -6,7 +6,7 @@ const userSchema = new Schema({
         required: true,
         unique: true,
     },
-	pb_number: {
+    pb_number: {
         type: String,
         required: true,
         unique: true,
@@ -14,32 +14,32 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
-    },	
-	name: {
+    },
+    name: {
         type: String,
         required: true,
     },
-	gender: {
+    gender: {
         type: String,
         required: false,
     },
-	phone: {
+    phone: {
         type: String,
         required: false,
     },
-	role: {
-        type: String,
-        required: false,
-    }, 
-	division: {
+    role: {
         type: String,
         required: false,
     },
-	department: {
+    division: {
         type: String,
         required: false,
     },
-	designation: {
+    department: {
+        type: String,
+        required: false,
+    },
+    designation: {
         type: String,
         required: false,
     },
@@ -47,7 +47,7 @@ const userSchema = new Schema({
         {
             type: String,
             ref: 'Chat',
-			default: []
+            default: [],
         },
     ],
 });
