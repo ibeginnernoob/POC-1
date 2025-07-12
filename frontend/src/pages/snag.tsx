@@ -19,9 +19,7 @@ export default function Snag() {
     const { snagDetails, isLoading } = useFetch(snagId);
     const [open, setOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const handleShowHistorical = () => {
-        setOpen(true);
-    }
+
 
     const similar_historical_snags = snagDetails?.similar_historical_snags;
 

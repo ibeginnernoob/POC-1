@@ -7,6 +7,7 @@ import Landing from "./pages/landing";
 import Snag from "./pages/snag";
 import Analytics from "./pages/analytics";
 import Test from "./pages/test";
+import '@/index.css'
 
 function App() {
   return (
