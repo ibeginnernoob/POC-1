@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import image from "../../../public/imgs/ChatGPT Image Jul 8, 2025, 12_48_59 PM.png";
-import logo from '../../../public/imgs/Screenshot 2025-07-12 at 5.47.16 PM.png'
 interface AuthLayoutProps {
   children: ReactNode;
   heading: string;
@@ -12,7 +10,7 @@ const AuthLayout = ({ children, heading }: AuthLayoutProps) => {
 
 <div className="w-full md:w-1/2 relative overflow-hidden h-64 md:h-screen order-1 md:order-2">
   <img 
-    src={image}
+    src={'../../../public/imgs/auth-tejas.png'}
     alt="Technology background"
     className="w-full h-full object-cover"
   />
@@ -21,7 +19,7 @@ const AuthLayout = ({ children, heading }: AuthLayoutProps) => {
 <div className="w-full md:w-1/2 bg-background flex flex-col items-center justify-center p-8 order-2 md:order-1 relative">
   <div className="relative md:absolute md:top-6 md:left-6 z-50 flex items-center justify-center md:justify-start mb-6 md:mb-0">
   <img
-  src={logo}
+  src={'../../../public/imgs/hal-logo.png'}
   alt="HAL Logo"
   className="h-10 sm:h-20 w-auto"
 />
