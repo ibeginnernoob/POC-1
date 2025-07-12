@@ -1,20 +1,37 @@
+import { useMemo } from 'react';
 import { Send, Settings } from 'lucide-react';
 import { Textarea } from '@chakra-ui/react';
 import { Select, createListCollection } from '@chakra-ui/react';
 
+const getCollection = (items: string[]) => {
+    const collection = createListCollection({
+        items: items.map((item) => ({
+            label: item,
+            value: item,
+        })),
+    });
+
+    collection.items.push({
+        label: 'default',
+        value: 'default',
+    });
+
+    return collection;
+};
+
 export default function Input({
     handleModalOpen,
+    fetchDetails,
     query,
     handleSetQuery,
-	fetchDetails,
     files,
     selectedFile,
     handleSelectFile,
 }: {
     handleModalOpen: () => void;
+    fetchDetails: () => Promise<void>;
     query: string;
     handleSetQuery: (value: string) => void;
-    fetchDetails: () => Promise<void>;
     files: string[];
     selectedFile: string[];
     handleSelectFile: (e: any) => void;
@@ -42,12 +59,12 @@ export default function Input({
     //     inputValues.checked,
     // ]);
 
-    // const isDisabled: boolean = useMemo(() => {
-    //     if (inputValues.prompt.length === 0) {
-    //         return true;
-    //     }
-    //     return false;
-    // }, [inputValues.prompt]);
+    const isDisabled: boolean = useMemo(() => {
+        if (query.length === 0) {
+            return true;
+        }
+        return false;
+    }, [query]);
 
     return (
         <div className="h-[20vh] pt-3 w-[100%] flex flex-col items-center gap-3 border-t-[0.5px] border-solid border-slate-200 bg-white">
@@ -108,14 +125,12 @@ export default function Input({
                         onClick={async () => {
                             await fetchDetails();
                         }}
-                        // disabled={isDisabled}
-                        className={
-                            `p-3 rounded-md bg-black flex justify-center items-center` // ${
-                            // isDisabled
-                            //     ? 'opacity-60'
-                            //     : 'hover:opacity-60 duration-200'
-                            // }`
-                        }
+                        disabled={isDisabled}
+                        className={`p-3 rounded-md bg-black flex justify-center items-center${
+                            isDisabled
+                                ? 'opacity-60'
+                                : 'hover:opacity-60 duration-200'
+                        }`}
                     >
                         <Send size={20} color="white" />
                     </button>
@@ -129,22 +144,6 @@ export default function Input({
         </div>
     );
 }
-
-const getCollection = (items: string[]) => {
-    const collection = createListCollection({
-        items: items.map((item) => ({
-            label: item,
-            value: item,
-        })),
-    });
-
-    collection.items.push({
-        label: 'default',
-        value: 'default',
-    });
-
-    return collection;
-};
 
 function InputTextArea({
     query,

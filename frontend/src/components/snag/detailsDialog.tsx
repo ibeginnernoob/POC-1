@@ -10,30 +10,21 @@ import useFetchCols from '@/hooks/useFetchCols';
 export default function DetailsDialog({
     dialogValues,
     setDialogValues,
-    handleClose,
     selectedFile,
+    handleClose,
 }: {
     dialogValues: any;
     setDialogValues: React.Dispatch<any>;
-    handleClose: () => void;
     selectedFile: string;
+    handleClose: () => void;
 }) {
-    const { cols, isLoading } = useFetchCols(selectedFile);
+    const { cols, isLoading: isLoadingCols } = useFetchCols(selectedFile);
 
     const [dropdowns, setDropdowns] = useState<any[]>([]);
     const [dropdownValues, setDropdownValues] = useState<any>({});
 
-    const applyConfig = () => {
-        setDialogValues(dropdownValues);
-        handleClose();
-    };
-
-    const resetConfig = () => {
-        setDropdownValues({});
-    };
-
     useEffect(() => {
-        if (cols && !isLoading) {
+        if (cols && !isLoadingCols) {
             const tempDropdowns: any[] = [];
             const tempDropdownValues: any = {};
             Object.keys(cols).forEach((key) => {
@@ -46,9 +37,18 @@ export default function DetailsDialog({
             setDropdowns(tempDropdowns);
             setDropdownValues(tempDropdownValues);
         }
-    }, [cols, isLoading]);
+    }, [cols, isLoadingCols]);
 
-    if (isLoading) {
+    const applyConfig = () => {
+        setDialogValues(dropdownValues);
+        handleClose();
+    };
+
+    const resetConfig = () => {
+        setDropdownValues({});
+    };
+
+    if (isLoadingCols) {
         return (
             <div className="p-10 flex justify-center items-center">
                 <Loader />
@@ -66,10 +66,10 @@ export default function DetailsDialog({
                         Snag Details Configuration
                     </h1>
                 </div>
-                {/* <p className="text-xs font-medium text-slate-600">
-                    Select the category, priority, and location to provide
-                    better context for AI analysis.
-                </p> */}
+                <p className="text-xs font-medium text-slate-600">
+                    Select the categories to provide better context for AI
+                    analysis.
+                </p>
             </div>
 
             {/* inputs */}
@@ -111,9 +111,6 @@ export default function DetailsDialog({
                     Reset All
                 </button>
                 <div className="flex flex-row items-center gap-4">
-                    {/* <button className="bg-white border-[0.5px] border-solid border-slate-300 px-3 py-1.5 text-xs font-medium rounded-md lg:text-sm">
-                        Cancel
-                    </button> */}
                     <button
                         onClick={applyConfig}
                         className="bg-blue-600 text-white px-3 py-1.5 text-xs font-semibold rounded-md lg:text-sm"
@@ -202,78 +199,3 @@ function OptionSelect({
         </div>
     );
 }
-
-// const HoursSlider = ({
-//     inputValues,
-//     setInputValues,
-// }: {
-//     inputValues: DialogValues;
-//     setInputValues: React.Dispatch<React.SetStateAction<DialogValues>>;
-// }) => {
-//     return (
-//         <div className="flex flex-row gap-5 align-top">
-//             <div className="pt-0.5">
-//                 <Checkbox.Root
-//                     checked={inputValues.checked}
-//                     onCheckedChange={() =>
-//                         setInputValues((prevState) => {
-//                             return {
-//                                 ...prevState,
-//                                 checked: !prevState.checked,
-//                             };
-//                         })
-//                     }
-//                     size={'sm'}
-//                     defaultChecked
-//                     variant={'subtle'}
-//                 >
-//                     <Checkbox.HiddenInput />
-//                     <Checkbox.Control />
-//                 </Checkbox.Root>
-//             </div>
-//             <div className="w-[100%] flex flex-col gap-1">
-//                 <Slider.Root
-//                     className="w-[100%]"
-//                     minStepsBetweenThumbs={5}
-//                     defaultValue={[
-//                         inputValues.hours[0] / 20,
-//                         inputValues.hours[1] / 20,
-//                     ]}
-//                     disabled={!inputValues.checked}
-//                     onValueChange={(e) =>
-//                         setInputValues((prevState) => {
-//                             const formattedMap: number[] = [];
-//                             e.value.map((val) => {
-//                                 formattedMap.push(val * 20);
-//                             });
-//                             return {
-//                                 ...prevState,
-//                                 hours: formattedMap,
-//                             };
-//                         })
-//                     }
-//                 >
-//                     <Slider.Control>
-//                         <Slider.Track className="bg-gray-300">
-//                             <Slider.Range className="bg-green-500" />
-//                         </Slider.Track>
-//                         <Slider.Thumb
-//                             index={0}
-//                             className="bg-black border-[3px] border-solid border-white"
-//                         ></Slider.Thumb>
-//                         <Slider.Thumb
-//                             index={1}
-//                             className="bg-black border-[3px] border-solid border-white"
-//                         ></Slider.Thumb>
-//                     </Slider.Control>
-//                 </Slider.Root>
-//                 {inputValues.checked && (
-//                     <div className="w-[100%] text-xs px-1 flex flex-row justify-between items-center">
-//                         <p>{inputValues.hours[0]}</p>
-//                         <p>{inputValues.hours[1]}</p>
-//                     </div>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };

@@ -5,17 +5,8 @@ import Busboy from 'busboy';
 
 const router = Router();
 
-type ReqPayload = {
-    filename: string;
-    prompt: string;
-};
-
-type FetchFiles = {
-    files: string[];
-};
-
-export type GeneratedData = {
-    userId?: string;
+type GeneratedData = {
+    userId?: string; // add this to store in DB once the ML response arrives
     timestamp: string;
     query: string;
     rectification: {
@@ -30,14 +21,23 @@ router.post('/rectify', async (req, res, next) => {
         console.log(req.userId);
         console.log(req.pb_number);
 
-        const reqBody: ReqPayload = req.body;
+        const reqBody: {
+            prompt: string;
+            filename: string;
+        } = req.body;
 
         const prompt = reqBody.prompt;
         const filename = reqBody.filename;
 
         if (!filename || filename.length === 0) {
-            res.json({
+            res.status(404).json({
                 msg: 'No file provided!',
+            });
+            return;
+        }
+        if (prompt.length === 0) {
+            res.status(404).json({
+                msg: 'No prompt provided!',
             });
             return;
         }
@@ -71,8 +71,8 @@ router.post('/rectify', async (req, res, next) => {
         }
 
         if (!generatedRes || generatedRes.status !== 200) {
-            res.json({
-                msg: 'Could not generate!',
+            res.status(500).json({
+                msg: 'Could not generate rectification!',
             });
         }
 
@@ -86,7 +86,7 @@ router.post('/rectify', async (req, res, next) => {
         const DBRes = await newSnag.save();
 
         res.status(200).json({
-            msg: 'Works!',
+            msg: 'Response successfully generated!',
             snagId: DBRes._id,
         });
     } catch (e: any) {
@@ -180,8 +180,8 @@ router.post('/upload-file', async (req, res, next) => {
 
 router.get('/user-files', async (req, res, next) => {
     try {
-        const userId = req.userId;
         const pb_number = req.pb_number;
+
         const MLres = await axios.post(
             `${process.env.FAST_API_URL}/send_file_names/`,
             {
@@ -197,7 +197,9 @@ router.get('/user-files', async (req, res, next) => {
             });
         }
 
-        const resData = MLres.data as FetchFiles;
+        const resData = MLres.data as {
+            files: string[];
+        };
 
         res.status(200).json({
             msg: 'User files fetched successfully',
@@ -215,10 +217,18 @@ router.post('/fetch-cols', async (req, res, next) => {
     try {
         const pb_number = req.pb_number;
 
+        if (!pb_number || pb_number.length === 0) {
+            res.status(404).json({
+                msg: 'PB_number not found',
+            });
+            return;
+        }
+
         if (!req.body.filename || req.body.filename.length === 0) {
             res.status(404).json({
                 msg: 'Filename not provided',
             });
+            return;
         }
 
         const MLres = await axios.post(

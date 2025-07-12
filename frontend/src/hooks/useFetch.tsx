@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-export type SnagDetails = {
-    _id: string;
-    userId: string;
-    timestamp: string;
-    query: string;
-    rectification: {
-        ai_recommendation: string;
-        based_on_historical_cases: string;
-    };
-    similar_historical_snags: any[];
-};
+import type { SnagDetails } from '@/types/snag';
 
 type ResBody = {
     msg: string;
@@ -20,7 +9,7 @@ type ResBody = {
 
 const useFetch = (snagId: string | undefined) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
+    // const [isError, setIsError] = useState(false);
     const [snagDetails, setSnagDetails] = useState<SnagDetails | null>(null);
 
     useEffect(() => {
