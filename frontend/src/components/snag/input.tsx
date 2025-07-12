@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Send, Settings } from 'lucide-react';
+import { ArrowUp, Settings } from 'lucide-react';
 import { Textarea } from '@chakra-ui/react';
 import { Select, createListCollection } from '@chakra-ui/react';
 
@@ -67,24 +67,26 @@ export default function Input({
     }, [query]);
 
     return (
-        <div className="h-[20vh] pt-3 w-[100%] flex flex-col items-center gap-3 border-t-[0.5px] border-solid border-slate-200 bg-white">
-            <div className="flex flex-row items-center justify-between gap-5 w-[100%] max-w-2xl px-6">
-                <div className="flex-1 mx-auto">
+        <div className="w-[100%] py-3 gap-3 flex flex-col items-center border-t-[0.5px] border-solid border-slate-200 bg-white">
+            <div className="w-[100%] max-w-xl px-3 flex flex-row items-center justify-between gap-2">
+                <div className="flex-1">
                     <button
                         onClick={handleModalOpen}
-                        className="w-[100%] max-w-xl px-3 py-2 bg-white flex flex-row items-center gap-3 text-sm font-medium border-[0.5px] border-solid border-gray-400 rounded-md"
+                        className="w-[100%] px-3 py-2 bg-white flex flex-row items-center justify-between gap-3 text-xs font-medium border-[0.5px] border-solid border-gray-400 rounded-md sm:text-sm"
                     >
-                        <Settings size={14} color="black" />
-                        <p>Configure Snag Details</p>
+                        <div className="flex flex-row items-center gap-3">
+                            <Settings size={14} color="black" />
+                            <p>Configure Details</p>
+                        </div>
                         <div className="p-1 h-5 w-5 rounded-full bg-gray-300 flex justify-center items-center">
                             <p className="text-xs font-light">{0}</p>
                         </div>
                     </button>
                 </div>
-                <div className="flex-1 mx-auto w-[100%]">
+                <div className="flex-1">
                     <Select.Root
                         collection={getCollection(files)}
-                        className="max-w-xl w-[100%] border-[0.5px] border-solid border-gray-400 rounded-md pl-4 text-sm font-medium"
+                        className="w-[100%] border-[0.5px] border-solid border-gray-400 rounded-md pl-4 text-sm font-medium"
                         size="sm"
                         positioning={{ placement: 'top', flip: false }}
                         value={selectedFile || ''}
@@ -94,7 +96,7 @@ export default function Input({
                         <Select.Control>
                             <Select.Trigger>
                                 <Select.ValueText
-                                    className="text-sm font-medium"
+                                    className="text-xs font-medium sm:text-sm"
                                     placeholder="Select file"
                                 />
                             </Select.Trigger>
@@ -116,7 +118,7 @@ export default function Input({
                 </div>
             </div>
             <div className="bg-white w-[100%] flex flex-col justify-center items-center gap-1">
-                <div className="flex-1 flex flex-row gap-3 justify-center items-start w-[100%] max-w-4xl px-5">
+                <div className="flex-1 flex flex-row gap-2 justify-center items-start w-[100%] max-w-4xl px-2">
                     <InputTextArea
                         query={query}
                         handleSetQuery={handleSetQuery}
@@ -126,20 +128,15 @@ export default function Input({
                             await fetchDetails();
                         }}
                         disabled={isDisabled}
-                        className={`p-3 rounded-md bg-black flex justify-center items-center${
+                        className={`p-2 rounded-full bg-black flex justify-center items-center${
                             isDisabled
                                 ? 'opacity-60'
                                 : 'hover:opacity-60 duration-200'
                         }`}
                     >
-                        <Send size={20} color="white" />
+                        <ArrowUp color="white" className="h-5 w-5" />
                     </button>
                 </div>
-                <p className="text-xs font-light px-6">
-                    Tip: Use the "Configure Snag Details" button above to
-                    provide category, priority, and location for more accurate
-                    recommendations.
-                </p>
             </div>
         </div>
     );
@@ -154,14 +151,14 @@ function InputTextArea({
 }) {
     return (
         <Textarea
-            className="max-w-3xl py-2 px-3 border border-solid border-gray-300 rounded-lg text-sm"
+            className="w-[100%] py-2 px-3 border-[0.5px] border-solid border-gray-400 rounded-lg text-sm"
             value={query}
             onChange={(e) => {
                 handleSetQuery(e.target.value);
             }}
             placeholder="Describe your snag issue ..."
-            maxH="3lh"
-            minH="3lh"
+            maxH="10lh"
+            minH="1lh"
             _focus={{
                 borderColor: 'blue.300',
                 borderWidth: '1.1px',

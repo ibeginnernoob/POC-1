@@ -12,12 +12,10 @@ const useIsAuth = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const token = localStorage.getItem('token');
-
+                const token = localStorage.getItem('token');				
                 if (!token) {
                     return;
-                }
-
+                }				
                 const res = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/auth/check-auth`,
                     {

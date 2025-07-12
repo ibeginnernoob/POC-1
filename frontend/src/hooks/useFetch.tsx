@@ -17,10 +17,9 @@ const useFetch = (snagId: string | undefined) => {
             const token = localStorage.getItem('token');
 
             try {
-                setIsLoading(true);
-
+                setIsLoading(true);				
                 const res = await axios.get(
-                    `http://localhost:3000/snag/fetch/${snagId}`,
+                    `${import.meta.env.BASE_URL}/snag/fetch/${snagId}`,
                     {
                         headers: {
                             authorization: token,

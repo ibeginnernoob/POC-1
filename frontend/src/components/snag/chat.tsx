@@ -10,10 +10,12 @@ export default function Chat({
     snagDetails?: SnagDetails | null;
 }) {
     return (
-        <div className="bg-white w-[100%]">
+        <div className="bg-white w-[100%] h-[100%]">
             <div className="bg-white max-w-5xl mx-auto px-6 py-8 flex flex-col gap-10">
                 {isNew ? (
-                    <Message details={null} />
+                    <>
+                        <Message details={null} />
+                    </>
                 ) : (
                     <>
                         <UserMessage query={snagDetails?.query || ''} />
@@ -76,14 +78,14 @@ function Message({ details }: { details: SnagDetails | null | undefined }) {
 }
 
 function UserMessage({ query }: { query: string }) {
-  return (
-    <div className="flex flex-row justify-end items-start gap-1">
-      <div className="max-w-2xl flex flex-col flex-start bg-green-200">
-        <p className="text-sm font-medium">{query}</p>
-      </div>
-      <div className="rounded-full p-2 bg-black">
-        <User size={14} color="white" />
-      </div>
-    </div>
-  );
+    return (
+        <div className="flex flex-row justify-end items-start gap-1">
+            <div className="max-w-2xl flex flex-col flex-start bg-green-200">
+                <p className="text-sm font-medium">{query}</p>
+            </div>
+            <div className="rounded-full p-2 bg-black">
+                <User size={14} color="white" />
+            </div>
+        </div>
+    );
 }

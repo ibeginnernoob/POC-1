@@ -179,7 +179,7 @@ export default function NewChat() {
     };
 
     return (
-        <div className="h-screen flex flex-col relative">
+        <div className="w-screen h-screen flex flex-col">
             <Modal
                 open={isLoading || isLoadingAuthStatus || isLoadingOptionFiles}
                 onClose={() => setIsLoading(false)}
@@ -220,24 +220,26 @@ export default function NewChat() {
                     </Box>
                 </Fade>
             </Modal>
-            <div className={`w-[100%] overflow-y-auto h-[80vh]`}>
-                <Header
-                    handleSidebarOpen={handleSidebarOpen}
-                    handleFileSelect={handleUploadFileSelect}
-                    fileUploadRef={fileUpload}
-                    isNew={true}
-                />
-				<Chat isNew={true} />
-            </div>
-            <Input
-                handleModalOpen={handleDetailsDialogOpen}
-                query={query}
-                handleSetQuery={handleSetQuery}
-                fetchDetails={fetchDetails}
-                files={optionFiles}
-                selectedFile={selectedFiles}
-                handleSelectFile={handleFileOptionSelect}
+            <Header
+                handleSidebarOpen={handleSidebarOpen}
+                handleFileSelect={handleUploadFileSelect}
+                fileUploadRef={fileUpload}
+                isNew={true}
             />
+            <div className="flex-1 overflow-y-auto">
+                <Chat isNew={true} />
+            </div>
+            <div className="flex-shrink-0">
+                <Input
+                    handleModalOpen={handleDetailsDialogOpen}
+                    query={query}
+                    handleSetQuery={handleSetQuery}
+                    fetchDetails={fetchDetails}
+                    files={optionFiles}
+                    selectedFile={selectedFiles}
+                    handleSelectFile={handleFileOptionSelect}
+                />
+            </div>
         </div>
     );
 }
