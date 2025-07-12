@@ -75,7 +75,7 @@ export default function Header({
                         </div>
                         <div className="flex flex-row items-center">
                             <Button
-                                onClick={() => handleShowAnalysis()}
+                                // onClick={() => handleShowAnalysis()}
                                 className="px-2.5 py-1.5 text-nowrap text-black text-xs font-roboto font-medium border border-solid border-black rounded-md md:text-sm hover:bg-slate-100 duration-200"
                             >
                                 Analytics
