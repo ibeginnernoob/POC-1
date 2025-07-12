@@ -30,18 +30,18 @@ export default function UploadFileModal({
     isUploading: boolean;
 }) {
     return (
-        <div className="bg-white">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-md">
+            <div className="bg-white rounded-md shadow-xl max-w-[600px] min-w-80 w-full max-h-[90vh] overflow-y-auto">
                 {/* Modal Header */}
-                <div className="flex items-center justify-between p-6 border-b">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                <div className="flex items-center justify-between px-4 py-5 border-b">
+                    <h3 className="text-base font-semibold text-gray-800 md:text-lg">
                         File Preview & Confirmation
                     </h3>
                     <button
                         onClick={handleUploadClose}
                         className="text-gray-400 hover:text-gray-600 transition-colors"
                     >
-                        <X size={24} />
+                        <X className='h-5 w-5' />
                     </button>
                 </div>
 
@@ -119,7 +119,7 @@ export default function UploadFileModal({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end space-x-3 p-6 border-t bg-gray-50">
+                <div className="flex items-center justify-between p-5 border-t bg-gray-50">
                     <button
                         onClick={handleUploadClose}
                         className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"

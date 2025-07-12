@@ -50,19 +50,19 @@ export default function DetailsDialog({
 
     if (isLoadingCols) {
         return (
-            <div className="p-10 flex justify-center items-center">
+            <div className="px-40 py-20 flex justify-center items-center rounded-md bg-white">
                 <Loader />
             </div>
         );
     }
 
     return (
-        <div className="max-h-screen h-fit max-w-3xl min-w-[300px] bg-white px-8 py-3 rounded-md overflow-y-auto">
+        <div className="max-h-[600px] max-w-3xl min-w-80 h-fit bg-white px-3 py-5 rounded-md overflow-y-auto">
             {/* header */}
-            <div className="flex flex-col gap-1">
+            <div className="pl-2 flex flex-col gap-1">
                 <div className="flex flex-row items-center gap-2">
-                    <Settings size={16} color="black" />
-                    <h1 className="text-base font-semibold">
+                    <Settings size={18} color="black" />
+                    <h1 className="text-lg font-semibold">
                         Snag Details Configuration
                     </h1>
                 </div>
@@ -73,11 +73,11 @@ export default function DetailsDialog({
             </div>
 
             {/* inputs */}
-            <div className="mt-4 px-6 py-4 flex flex-col gap-3 border-[0.5px] border-solid border-gray-300 rounded-lg shadow-sm">
+            <div className="mt-4 px-4 py-4 flex flex-col justify-center gap-3 border-[0.5px] border-solid border-gray-300 rounded-lg shadow-sm">
                 <h2 className="text-base font-semibold">Select Details</h2>
 
                 {/* dropdowns */}
-                <div className="w-[100%] flex flex-row flex-wrap items-center gap-x-6 gap-y-4">
+                <div className="w-[100%] flex flex-row flex-wrap items-center justify-center gap-x-6 gap-y-4">
                     {dropdowns.map(
                         (details: { title: string; options: string[] }) => {
                             return (
@@ -103,7 +103,7 @@ export default function DetailsDialog({
             </div>
 
             {/* Buttons */}
-            <div className="w-[100%] mt-4 flex flex-row justify-between items-center gap-5">
+            <div className="w-[100%] mt-4 px-2 flex flex-row justify-between items-center gap-5">
                 <button
                     onClick={resetConfig}
                     className="bg-white border-[0.5px] border-solid border-slate-300 px-3 py-1.5 text-xs font-medium rounded-md lg:text-sm"
@@ -135,31 +135,20 @@ function OptionSelect({
     setValue: (value: string | null) => void;
 }) {
     return (
-        <div className="bg-white flex flex-col flex-1 gap-1.5">
-            <div className="flex flex-row items-center">
-                <h2 className="text-xs font-medium">{title}</h2>
-            </div>
+        <div className="flex-1 max-w-60 w-[100%] flex flex-col items-center gap-1.5">
+            <h2 className="text-xs font-medium md:text-sm">{title}</h2>
             {options.length > 0 && (
                 <FormControl
                     size="small"
                     fullWidth
                     sx={{
-                        minWidth: '120px',
+                        minWidth: '160px',
+                        flex: 1,
                     }}
                 >
-                    <InputLabel
-                        id="demo-simple-select-label"
-                        sx={{
-                            fontSize: 14,
-                            margin: 0,
-                            color: 'gray',
-                        }}
-                    >
-                        {title}
-                    </InputLabel>
                     <Select
                         value={value}
-                        label={title}
+                        // label={title}
                         onChange={(e) => setValue(e.target.value || '')}
                         sx={{
                             height: 40,
@@ -189,8 +178,9 @@ function OptionSelect({
             {options.length === 0 && (
                 <input
                     type="text"
-                    placeholder={title}
+                    placeholder={`Enter ${title}`}
                     value={value || ''}
+                    className="flex-1 max-w-60 min-w-[150px] w-[100%] px-2 py-2.5 border-[0.5px] border-solid border-gray-400 rounded-md text-sm md:text-base"
                     onChange={(e) => {
                         setValue(e.target.value);
                     }}

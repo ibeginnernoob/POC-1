@@ -118,7 +118,7 @@ export default function Input({
                 </div>
             </div>
             <div className="bg-white w-[100%] flex flex-col justify-center items-center gap-1">
-                <div className="flex-1 flex flex-row gap-2 justify-center items-start w-[100%] max-w-4xl px-2">
+                <div className="max-w-2xl flex-1 flex flex-row gap-2 justify-center items-start w-[100%] px-2">
                     <InputTextArea
                         query={query}
                         handleSetQuery={handleSetQuery}
@@ -128,10 +128,10 @@ export default function Input({
                             await fetchDetails();
                         }}
                         disabled={isDisabled}
-                        className={`p-2 rounded-full bg-black flex justify-center items-center${
+                        className={`p-3 rounded-full flex justify-center items-center transition-transform duration-200 ${
                             isDisabled
-                                ? 'opacity-60'
-                                : 'hover:opacity-60 duration-200'
+                                ? 'bg-gray-300 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:scale-105 hover:opacity-90'
                         }`}
                     >
                         <ArrowUp color="white" className="h-5 w-5" />
@@ -151,7 +151,7 @@ function InputTextArea({
 }) {
     return (
         <Textarea
-            className="w-[100%] py-2 px-3 border-[0.5px] border-solid border-gray-400 rounded-lg text-sm"
+            className="w-full py-2 px-3 border border-gray-300 rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 md:text-base"
             value={query}
             onChange={(e) => {
                 handleSetQuery(e.target.value);
@@ -159,10 +159,12 @@ function InputTextArea({
             placeholder="Describe your snag issue ..."
             maxH="10lh"
             minH="1lh"
+            _hover={{
+                borderColor: 'gray.400',
+            }}
             _focus={{
-                borderColor: 'blue.300',
-                borderWidth: '1.1px',
-                boxShadow: '0 0 0 1px blue.500',
+                borderColor: 'blue.400',
+                boxShadow: '0 0 0 1px rgba(59, 130, 246, 0.5)',
             }}
             autoresize
         />

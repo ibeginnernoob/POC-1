@@ -19,7 +19,7 @@ const useFetch = (snagId: string | undefined) => {
             try {
                 setIsLoading(true);				
                 const res = await axios.get(
-                    `${import.meta.env.BASE_URL}/snag/fetch/${snagId}`,
+                    `${import.meta.env.VITE_BACKEND_URL}/snag/fetch/${snagId}`,
                     {
                         headers: {
                             authorization: token,

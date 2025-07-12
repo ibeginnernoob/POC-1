@@ -22,7 +22,7 @@ const useFetchCols = (filename: string) => {
                 const token: string = localStorage.getItem('token') || '';
 
                 const res = await axios.post(
-                    `${import.meta.env.BASE_URL}/snag/fetch-cols`,
+                    `${import.meta.env.VITE_BACKEND_URL}/snag/fetch-cols`,
                     {
                         filename: filename,
                     },
