@@ -9,6 +9,7 @@ import Sidebar from '@/components/snag/sidebar';
 import Loader from '@/components/ui/loader';
 import { useNavigate } from 'react-router';
 import useFetch from '@/hooks/useFetch';
+import SimilarSnagsList from '@/components/snag/SimilarSnagsList.tsx';
 
 const sidebarStyles: SxProps<Theme> | undefined = {
     position: 'absolute',
@@ -34,8 +35,13 @@ export default function Snag() {
     const navigate = useNavigate();
     const { isAuth, isLoading: isLoadingIsAuth } = useIsAuth();
     const { snagDetails, isLoading } = useFetch(snagId);
-
+    const [open, setOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const handleShowHistorical = () => {
+        setOpen(true);
+    }
+
+    const similar_historical_snags = snagDetails?.similar_historical_snags;
 
     const handleSidebarOpen = () => {
         setSidebarOpen(true);
@@ -71,9 +77,11 @@ export default function Snag() {
                 </Fade>
             </Modal>
             <div className={`w-[100%] overflow-y-auto h-[100vh]`}>
-                <Header handleSidebarOpen={handleSidebarOpen} isNew={false} />
+                <Header handleSidebarOpen={handleSidebarOpen} isNew={false} setOpen={setOpen}/>
                 <Chat isNew={false} snagDetails={snagDetails} />
-            </div>
+                <SimilarSnagsList open={open} setOpen = {setOpen} data = {similar_historical_snags}/>
+        
+        </div>
         </div>
     );
 }

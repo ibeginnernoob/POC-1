@@ -1,21 +1,25 @@
 import { Wrench, PanelRight } from 'lucide-react';
-
+import {Button} from "@/components/lovable/button"
+import type { Dispatch } from 'react';
 export default function Header({
     handleSidebarOpen,
     handleFileSelect,
     fileUploadRef,
 	isNew,
+    setOpen
 }: {
     handleSidebarOpen: () => void;
     handleFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     fileUploadRef?: React.RefObject<HTMLInputElement>;
 	isNew: boolean;
+    setOpen: Dispatch<React.SetStateAction<boolean>>;
 }) {
     const handleInputActive = () => {
         if (fileUploadRef && fileUploadRef.current) {
             fileUploadRef.current.click();
         }
     };
+
 
     return (
         <div className="h-fit w-[100%] py-3 bg-white border-b-[0.5px] border-solid border-gray-300">
@@ -57,6 +61,25 @@ export default function Header({
                         Upload
                     </button>
                 </div>}
+                <div className='flex gap-6'>
+                {!isNew && <div className="flex flex-row items-center">
+                    <Button
+                        onClick={() => setOpen(true)}
+                        className="px-2.5 py-1.5 text-nowrap text-black text-xs font-roboto font-medium border border-solid border-black rounded-md md:text-sm hover:bg-slate-100 duration-200"
+                    >
+                        Historical Cases
+                    </Button>
+                </div>}
+                {!isNew && <div className="flex flex-row items-center">
+                    <Button
+                        onClick={() => handleShowAnalysis()}
+                        className="px-2.5 py-1.5 text-nowrap text-black text-xs font-roboto font-medium border border-solid border-black rounded-md md:text-sm hover:bg-slate-100 duration-200"
+                    >
+                        Analytics
+                    </Button>
+                </div>}
+                </div>
+                
             </div>
         </div>
     );

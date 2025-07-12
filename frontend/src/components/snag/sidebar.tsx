@@ -16,7 +16,7 @@
 //   );
 // }
 
-import { Plus, MessageSquare, Search, User, Settings, MoreHorizontal, Trash2, Edit3 } from "lucide-react";
+import { Plus, MessageSquare, Search, MoreHorizontal, Trash2, Edit3 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/lovable/button";
 import { Input } from "@/components/lovable/input";
@@ -57,11 +57,6 @@ export default function Sidebar() {
   const filteredChats = mockChats.filter(chat =>
     chat.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleNewChat = () => {
-    setActiveChat(null);
-    // Logic to create new chat
-  };
 
   const handleChatSelect = (chatId: string) => {
     setActiveChat(chatId);
