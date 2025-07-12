@@ -17,9 +17,14 @@ import {
 } from "@/components/lovable/avatar";
 import { Search, FileCheck, User, ArrowRight, Zap, Shield, TrendingUp, Package, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import useIsAuth from "@/hooks/useIsAuth";
+
 
 
 const Landing = () => {
+  const navigation = useNavigate();
+  const { isLoading, isAuth } = useIsAuth();
   const navigator = useNavigate()
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
 
@@ -99,10 +104,13 @@ const Landing = () => {
   ];
 
   const handleFeatureClick = (featureId:string, url:string) => {
-    // Navigate to the feature's page
-    navigator(url);
-    console.log(`Clicked feature: ${featureId}`);
+    if (isAuth) {
+      navigator(url);
+    } else {
+      navigator("/login");
+    }
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -114,13 +122,51 @@ const Landing = () => {
                 <img src={logo} className="h-10 w-auto" alt="" /><img className="h-14" src={iiit} alt="" />
             </div>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-blue-100 text-blue-600">
-                    <User className="w-5 h-5" />
-                  </AvatarFallback>
-                </Avatar>
-              </div>
+              {/* <Badge
+                                variant="outline"
+                                className="text-green-600 border-green-500"
+                            >
+                                System Online
+                            </Badge> */}
+              {isAuth && (
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src="" alt="User" />
+                    <AvatarFallback className="bg-blue-100 text-blue-600">
+                      <User className="w-5 h-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                  {/* <span className="text-sm font-medium text-gray-900">
+                                        John Doe
+                                    </span> */}
+                </div>
+              )}
+              {!isAuth && (
+                <div className="flex items-center space-x-3">
+                  <Button
+                    className="button-signup text-xs text-blue-600 border border-solid border-blue-300 rounded-lg"
+                    variant="outline"
+                    onClick={() => {
+                      navigation("/login");
+                    }}
+                  >
+                    Login
+                  </Button>
+                </div>
+              )}
+              {!isAuth && (
+                <div className="flex items-center space-x-3">
+                  <Button
+                    className="button-signup text-xs text-blue-600 border border-solid border-blue-300 rounded-lg"
+                    variant="outline"
+                    onClick={() => {
+                      navigation("/signup");
+                    }}
+                  >
+                    Signup
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

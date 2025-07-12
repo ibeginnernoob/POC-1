@@ -22,6 +22,7 @@ router.use(async (req, res, next) => {
         }
 
         const token: string = header?.split(' ')[1];
+        console.log(token)
         const payload = jwt.verify(
             token,
             process.env.JWT_SECRET as string
