@@ -1,24 +1,24 @@
 import React from "react";
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  ResponsiveContainer as RadarResponsiveContainer,
-} from "recharts";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
-import { RadarStatsChart } from "../components/analytics/radarStatsChart";
-import BarStatsChart from "../components/analytics/barStatsChart";
-import { PieStatsChart } from "../components/analytics/pieStatsChart";
+// import {
+//   RadarChart,
+//   PolarGrid,
+//   PolarAngleAxis,
+//   PolarRadiusAxis,
+//   Radar,
+//   ResponsiveContainer as RadarResponsiveContainer,
+// } from "recharts";
+// import { PieChart, Pie, Cell, Tooltip } from "recharts";
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   ResponsiveContainer,
+// } from "recharts";
+import { RadarStatsChart } from "../components/snag/analytics/radarStatsChart";
+import BarStatsChart from "../components/snag/analytics/barStatsChart";
+import { PieStatsChart } from "../components/snag/analytics/pieStatsChart";
 import { useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/lovable/button";

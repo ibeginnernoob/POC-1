@@ -55,7 +55,7 @@ router.get('/fetch-sidebar', async (req, res, next) => {
         const userId = req.userId;
 
         const snags = await Snag.find({ userId })
-            .select('_id query')
+            .select('_id query timestamp')
             .sort({ createdAt: -1 });
 
         if (!snags) {
