@@ -44,31 +44,18 @@ router.post("/rectify", async (req, res, next) => {
 
     let generatedRes = null;
 
-    if (filename === "default") {
-      const MLreqPayload = {
-        query: prompt,
-      };
+    const MLreqPayload = {
+      query: prompt,
+      file_name: filename,
+      pb_number: req.pb_number?.toString(),
+    };
 
-      console.log(MLreqPayload);
+    console.log(MLreqPayload);
 
-      generatedRes = await axios.post(
-        `${process.env.FAST_API_URL}/rectify-file`,
-        MLreqPayload
-      );
-    } else {
-      const MLreqPayload = {
-        query: prompt,
-        file_name: filename,
-        pb_number: req.pb_number?.toString(),
-      };
-
-      console.log(MLreqPayload);
-
-      generatedRes = await axios.post(
-        `${process.env.FAST_API_URL}/rectify-file`,
-        MLreqPayload
-      );
-    }
+    generatedRes = await axios.post(
+      `${process.env.FAST_API_URL}/rectify-file`,
+      MLreqPayload
+    );
 
     if (!generatedRes || generatedRes.status !== 200) {
       res.status(500).json({
@@ -119,6 +106,29 @@ router.get("/fetch-sidebar", async (req, res, next) => {
     res.status(500).json({
       msg: "Snag details could not be retrieved",
     });
+  }
+});
+
+router.post("/fetch-file-analysis", async (req, res) => {
+  const { file_name, pb_number, query } = req.body;
+
+  try {
+    const response = await axios.post(
+      "http://192.169.3.238:6969/analyse-file",
+      {
+        file_name,
+        pb_number,
+        query,
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(
+      "❌ Error calling FastAPI backend:",
+      (error as Error).message
+    );
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 

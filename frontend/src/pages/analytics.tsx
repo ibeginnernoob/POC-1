@@ -123,7 +123,7 @@ const Analytics = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://192.168.2.53:7000/analytics",
+        "http://192.168.3.238:6969/analytics",
         {
           query: "TR Vibrations",
           helicopter_type: "",
