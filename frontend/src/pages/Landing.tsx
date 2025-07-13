@@ -134,8 +134,8 @@ const Landing = () => {
             {/* Header */}
             <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
                 <div className="container mx-auto py-0">
-                    <div className="flex items-center justify-between px-10">
-                        <div className="flex py-6 items-center space-x-3">
+                    <div className="flex items-center justify-between px-5 md:px-10">
+                        <div className="flex py-6 items-center space-x-2 md:space-x-4">
                             <img
                                 src={'../../public/imgs/hal-logo.png'}
                                 className="h-10 w-auto"
@@ -151,10 +151,7 @@ const Landing = () => {
                                         <AvatarFallback className="bg-blue-100 text-blue-600">
                                             <User className="w-5 h-5" />
                                         </AvatarFallback>
-                                    </Avatar>
-                                    {/* <span className="text-sm font-medium text-gray-900">
-                                        John Doe
-                                    </span> */}
+                                    </Avatar>                                    
                                 </div>
                             )}
                             {!isAuth && (
@@ -191,14 +188,14 @@ const Landing = () => {
             {/* Hero Section */}
             <section className="container mx-auto px-6 pt-12">
                 <div className="text-center mb-16">
-                    <h1 className="text-6xl font-bold text-gray-900 mb-6">
+                    <h1 className="text-5xl font-bold text-gray-900 mb-6 md:text-6xl">
                         Aircraft Management
                         <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             {' '}
                             AI System
                         </span>
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+                    <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8 md:text-xl">
                         Revolutionizing aviation maintenance with cutting-edge
                         artificial intelligence. From defect detection to
                         predictive analytics, our comprehensive suite ensures
