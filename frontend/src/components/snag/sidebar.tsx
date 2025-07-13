@@ -6,7 +6,7 @@ import {
     Trash2,
     Edit3,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/lovable/button';
 import { Input } from '@/components/lovable/input';
 import { ScrollArea } from '@/components/lovable/scroll-area';
@@ -46,12 +46,18 @@ export default function Sidebar() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeChat, setActiveChat] = useState<string | null>('1');
     const { deleteSnag, loading, error } = useDeleteSnag();
-    const [tempSnags, setTempSnags] = useState(snags || []);
-    const chats = formatSnagsForSidebar(snags);
+    const [snagsState, setSnagsState] = useState(snags || []);
+    useEffect(() => {
+        if (snags) {
+          setSnagsState(snags);
+        }
+      }, [snags]);
+    const chats = formatSnagsForSidebar(snagsState);
+   
     const filteredChats = chats.filter((chat) =>
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    console.log(snags); 
+
 
     const handleChatSelect = (chatId: string) => {
         setActiveChat(chatId);
@@ -69,7 +75,8 @@ export default function Sidebar() {
 
         const res: DeleteResponse = await deleteSnag(id);
         if (res.success) {
-            setTempSnags((prev) => prev.filter((s) => s._id !== id));
+            setSnagsState((prev) => prev.filter((s) => s._id !== id));
+            console.log(snags)
         }
     };
 
@@ -144,7 +151,7 @@ export default function Sidebar() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent
                                         align="end"
-                                        className="w-52 bg-popover border border-border shadow-md"
+                                        className="w-52 bg-popover bg-white border border-border shadow-md"
                                         side="bottom"
                                         sideOffset={5}
                                         style={{ zIndex: 9999,opacity:1 }}
@@ -154,7 +161,7 @@ export default function Sidebar() {
                                                 e.stopPropagation();
                                                 handleDelete(chat.id);
                                             }}
-                                            className="text-destructive bg-black focus:text-destructive cursor-pointer "
+                                            className="text-black bg-white focus:text-destructive cursor-pointer "
                                         >
                                             <Trash2
                                                 size={14}
