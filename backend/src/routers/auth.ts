@@ -48,8 +48,6 @@ router.post('/signup', async (req, res, next) => {
         const newUser = new User(req.body as Req);
         const savedUser = await newUser.save();
 
-        console.log(res);
-
         const token = jwt.sign(
             {
                 userId: savedUser._id,
@@ -155,6 +153,23 @@ router.get('/check-auth', async (req, res, next) => {
             token,
             process.env.JWT_SECRET as string
         ) as JWTPayload;
+
+        if (!payload.userId) {
+            res.status(404).json({
+                msg: 'JWT payload incorrect',
+            });
+            return;
+        }
+
+        const user = await User.findById(payload.userId);
+
+        if (!user) {
+            res.status(404).json({
+                msg: 'Invalid user credentials, please sign in',
+            });
+            return;
+        }
+		
         res.status(200).json({
             msg: 'Valid JWT, user authenticated',
         });

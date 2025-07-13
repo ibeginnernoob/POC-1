@@ -35,7 +35,7 @@ export default function SimilarSnagsList({
         },
         {
             key: 'row number',
-            label: 'Rank',
+            label: 'Row Number',
             render: (_: any, row: SnagItem) => row.metadata.row_index,
         },
         ...fieldKeys.map((key) => ({

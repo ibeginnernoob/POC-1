@@ -6,6 +6,7 @@ import Busboy from 'busboy';
 const router = Router();
 
 type GeneratedData = {
+    filename?: string;
     userId?: string; // add this to store in DB once the ML response arrives
     timestamp: string;
     query: string;
@@ -16,11 +17,94 @@ type GeneratedData = {
     similar_historical_snags: any[];
 };
 
+router.get('/user-files', async (req, res, next) => {
+    try {
+        const pb_number = req.pb_number;
+
+        const MLres = await axios.post(
+            `${process.env.FAST_API_URL}/send_file_names/`,
+            {
+                pb_number: pb_number,
+            }
+        );
+
+        if (MLres.status !== 200) {
+            res.status(500).json({
+                msg: 'Failed to fetch user files',
+            });
+        }
+
+        const resData = MLres.data as {
+            files: string[];
+        };
+
+        res.status(200).json({
+            msg: 'User files fetched successfully',
+            files: resData.files,
+        });
+    } catch (e: any) {
+        console.log(e);
+        res.status(500).json({
+            msg: 'User files could not be retreived',
+        });
+    }
+});
+
+router.get('/fetch-sidebar', async (req, res, next) => {
+    try {
+        const userId = req.userId;
+
+        const snags = await Snag.find({ userId })
+            .select('_id query timestamp')
+            .sort({ createdAt: -1 });
+
+        if (!snags) {
+            res.status(404).json({
+                msg: 'user snags could not be fetched',
+            });
+            return;
+        }
+
+        res.status(200).json({
+            msg: 'Snag details found successfully',
+            snags,
+        });
+    } catch (e: any) {
+        console.error('❌ Error fetching snags:', e);
+        res.status(500).json({
+            msg: 'Snag details could not be retrieved',
+        });
+    }
+});
+
+router.get('/fetch/:snagId', async (req, res, next) => {
+    try {
+        const snagId = req.params.snagId;
+
+        const snag = await Snag.findById(snagId);
+
+        if (!snag) {
+            res.status(404).json({
+                msg: `Snag with id: ${snagId} could not be found`,
+            });
+            return;
+        }
+
+        res.json({
+            msg: 'Snag details found successfully',
+            snagDetails: snag,
+            pb_number: req.pb_number,
+        });
+    } catch (e: any) {
+        console.log(e);
+        res.status(500).json({
+            msg: 'Snag details could not be retreived',
+        });
+    }
+});
+
 router.post('/rectify', async (req, res, next) => {
     try {
-        console.log(req.userId);
-        console.log(req.pb_number);
-
         const reqBody: {
             prompt: string;
             filename: string;
@@ -35,27 +119,23 @@ router.post('/rectify', async (req, res, next) => {
             });
             return;
         }
-        if (prompt.length === 0) {
+        if (!prompt || prompt.length === 0) {
             res.status(404).json({
                 msg: 'No prompt provided!',
             });
             return;
         }
 
-        let generatedRes = null;
+        const MLreqPayload = {
+            query: prompt,
+            file_name: filename,
+            pb_number: req.pb_number?.toString(),
+        };
 
-    const MLreqPayload = {
-      query: prompt,
-      file_name: filename,
-      pb_number: req.pb_number?.toString(),
-    };
-
-    console.log(MLreqPayload);
-
-    generatedRes = await axios.post(
-      `${process.env.FAST_API_URL}/rectify`,
-      MLreqPayload
-    );
+        const generatedRes = await axios.post(
+            `${process.env.FAST_API_URL}/rectify`,
+            MLreqPayload
+        );
 
         if (!generatedRes || generatedRes.status !== 200) {
             res.status(500).json({
@@ -65,8 +145,9 @@ router.post('/rectify', async (req, res, next) => {
 
         const generatedData = generatedRes.data as GeneratedData;
         generatedData.userId = req.userId;
+        generatedData.filename = filename;
 
-        console.log(generatedData);
+        console.log('Generated Data file name:', generatedData.filename);
 
         const newSnag = new Snag(generatedData);
 
@@ -225,19 +306,20 @@ router.post("/upload-file", async (req, res, next) => {
             msg: 'Data could not generated',
         });
     }
-})})});
+});
 
-
-
-router.get('/fetch/:snagId', async (req, res, next) => {
+router.post('/analyse', async (req, res) => {
+    const { file_name, snagId } = req.body;
+    const pb_number = req.pb_number;
     try {
-        const snagId = req.params.snagId;
-        console.log('Fetching snag for snagId:', snagId);
+        if (!file_name || file_name.length === 0) {
+            res.status(404).json({
+                msg: 'No file provided!',
+            });
+            return;
+        }
 
         const snag = await Snag.findById(snagId);
-
-        console.log(snag);
-
         if (!snag) {
             res.status(404).json({
                 msg: `Snag with id: ${snagId} could not be found`,
@@ -245,14 +327,23 @@ router.get('/fetch/:snagId', async (req, res, next) => {
             return;
         }
 
-        res.json({
-            msg: 'Snag details found successfully',
-            snagDetails: snag,
-        });
-    } catch (e: any) {
-        console.log(e);
+        const fastapiUrl = `${process.env.FAST_API_ANLYSIS_URL}/analytics`;
+
+        // const response = await axios.post(fastapiUrl, {
+        //     file_name,
+        //     pb_number,
+        //     query,
+        // });
+
+        // res.status(200).json(response.data);
+    } catch (error) {
+        console.error(
+            'Error communicating with FastAPI backend:',
+            (error as any).message
+        );
         res.status(500).json({
-            msg: 'Snag details could not be retreived',
+            error: 'FastAPI request failed',
+            details: (error as any).message,
         });
     }
 });
@@ -299,7 +390,7 @@ router.post('/upload-file', async (req, res, next) => {
                         .json({ msg: 'Failed to upload file' });
                 }
 
-                res.json({
+                res.status(200).json({
                     msg: 'File uploaded successfully',
                 });
             } catch (error) {
@@ -311,51 +402,9 @@ router.post('/upload-file', async (req, res, next) => {
     req.pipe(busboy);
 });
 
-router.get('/user-files', async (req, res, next) => {
-    try {
-        const pb_number = req.pb_number;
-
-        const MLres = await axios.post(
-            `${process.env.FAST_API_URL}/send_file_names/`,
-            {
-                pb_number: pb_number,
-            }
-        );
-
-        console.log(process.env.FAST_API_URL);
-
-        if (MLres.status !== 200) {
-            res.status(500).json({
-                msg: 'Failed to fetch user files',
-            });
-        }
-
-        const resData = MLres.data as {
-            files: string[];
-        };
-
-        res.status(200).json({
-            msg: 'User files fetched successfully',
-            files: resData.files,
-        });
-    } catch (e: any) {
-        console.log(e);
-        res.status(500).json({
-            msg: 'User files could not be retreived',
-        });
-    }
-});
-
 router.post('/fetch-cols', async (req, res, next) => {
     try {
         const pb_number = req.pb_number;
-
-        if (!pb_number || pb_number.length === 0) {
-            res.status(404).json({
-                msg: 'PB_number not found',
-            });
-            return;
-        }
 
         if (!req.body.filename || req.body.filename.length === 0) {
             res.status(404).json({

@@ -1,6 +1,10 @@
 import { Schema, model } from 'mongoose';
 
 const snagSchema = new Schema({
+    filename: {
+        type: String,
+        required: true,
+    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -25,6 +29,10 @@ const snagSchema = new Schema({
         },
     },
     similar_historical_snags: Schema.Types.Mixed,
+    isAnalysisFetch: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const Snag = model('Snag', snagSchema);

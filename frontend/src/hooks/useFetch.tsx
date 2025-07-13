@@ -5,6 +5,7 @@ import type { SnagDetails } from '@/types/snag';
 type ResBody = {
     msg: string;
     snagDetails?: SnagDetails;
+    pb_number?: string;
 };
 
 const useFetch = (snagId: string | undefined) => {
@@ -17,7 +18,7 @@ const useFetch = (snagId: string | undefined) => {
             const token = localStorage.getItem('token');
 
             try {
-                setIsLoading(true);				
+                setIsLoading(true);
                 const res = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/snag/fetch/${snagId}`,
                     {
@@ -33,7 +34,12 @@ const useFetch = (snagId: string | undefined) => {
                     throw new Error(resData.msg);
                 }
 
-                setSnagDetails(resData.snagDetails);
+                const snagDetails: SnagDetails = {
+                    ...resData.snagDetails,
+                    pb_number: resData.pb_number || '',
+                };
+
+                setSnagDetails(snagDetails);
             } catch (e: any) {
                 console.log(e);
             } finally {

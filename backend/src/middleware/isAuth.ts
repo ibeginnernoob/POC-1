@@ -21,8 +21,7 @@ router.use(async (req, res, next) => {
             return;
         }
 
-        const token: string = header?.split(' ')[1];
-        console.log(token)
+        const token: string = header?.split(' ')[1];        
         const payload = jwt.verify(
             token,
             process.env.JWT_SECRET as string
@@ -42,13 +41,10 @@ router.use(async (req, res, next) => {
                 msg: 'Invalid user credentials, please sign in',
             });
 			return;
-		}
-
-		console.log(user.pb_number);
+		}		
 
         req.userId = payload.userId;
-		req.pb_number = user.pb_number;
-        console.log(req.userId);
+		req.pb_number = user.pb_number;        
         next();
     } catch (e: any) {
         console.log(e);
