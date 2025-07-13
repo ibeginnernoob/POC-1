@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router';
 import useFetch from '@/hooks/useFetch';
 import SimilarSnagsList from '@/components/snag/SimilarSnagsList.tsx';
 import React from 'react';
+import { useFetchAnalysis } from '@/hooks/useFetchAnalysis';
 
 import axios from 'axios';
 
@@ -23,34 +24,12 @@ export default function Snag() {
     const [open, setOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [analyticsData, setAnalyticsData] = React.useState<any>();
-    const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+    const { analyseSnag, data, loading, error } = useFetchAnalysis();
 
     const similar_historical_snags = snagDetails?.similar_historical_snags;
-    const handleShowAnalysis = async () => {
-        try {
-            setIsLoadingAnalysis(true);
-            const token = localStorage.getItem("token");
-            setAnalyticsData(resBody);
-            console.log(resBody);
-      
-            if (res.status !== 200) {
-              throw new Error(resBody.msg);
-            }
-          } catch (e: any) {
-            setAnalyticsData(analyticsData); // Fallback if needed
-            console.error("Error:", e);
-      
-            if (e.response) {
-              console.error("Response error:", e.response.data);
-              console.error("Status:", e.response.status);
-            } else if (e.request) {
-              console.error("Request made, but no response:", e.request);
-            } else {
-              console.error("Error:", e.message);
-            }
-          } finally {
-            setIsLoadingAnalysis(false);
-          }
+    const handleShowAnalysis = async (e:any) => {
+        e.preventDefault();
+        await analyseSnag({ file_name: fileName, pb_number: pbNumber, query });
     }
     const handleSidebarOpen = () => {
         setSidebarOpen(true);

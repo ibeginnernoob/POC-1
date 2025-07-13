@@ -53,7 +53,7 @@ router.post('/rectify', async (req, res, next) => {
     console.log(MLreqPayload);
 
     generatedRes = await axios.post(
-      `${process.env.FAST_API_URL}/rectify-file`,
+      `${process.env.FAST_API_URL}/rectify`,
       MLreqPayload
     );
 
@@ -109,28 +109,7 @@ router.get("/fetch-sidebar", async (req, res, next) => {
   }
 });
 
-router.post("/fetch-file-analysis", async (req, res) => {
-  const { file_name, pb_number, query } = req.body;
 
-  try {
-    const response = await axios.post(
-      "http://192.169.3.238:6969/analyse-file",
-      {
-        file_name,
-        pb_number,
-        query,
-      }
-    );
-
-    res.json(response.data);
-  } catch (error) {
-    console.error(
-      "❌ Error calling FastAPI backend:",
-      (error as Error).message
-    );
-    res.status(500).json({ error: (error as Error).message });
-  }
-});
 
 router.get("/fetch/:snagId", async (req, res, next) => {
   try {
@@ -159,6 +138,27 @@ router.get("/fetch/:snagId", async (req, res, next) => {
     });
   }
 });
+
+router.post('/analyse', async (req, res) => {
+    const { file_name, pb_number, query } = req.body;
+  
+    try {
+      const fastapiUrl = `${process.env.FAST_API_ANLYSIS_URL}/analytics`; // Update this if hosted elsewhere
+  
+      const response = await axios.post(fastapiUrl, {
+        file_name,
+        pb_number,
+        query
+      });
+  
+      res.status(200).json(response.data);
+    } catch (error) {
+      console.error("Error communicating with FastAPI backend:", (error as any).message);
+      res.status(500).json({ error: "FastAPI request failed", details: (error as any).message });
+    }
+  });
+  
+  module.exports = router;
 
 router.post("/upload-file", async (req, res, next) => {
   if (!req.userId) {
