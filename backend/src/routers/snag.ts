@@ -310,7 +310,6 @@ router.post("/upload-file", async (req, res, next) => {
 
 router.post('/analyse', async (req, res) => {
     const { file_name, snagId } = req.body;
-    const pb_number = req.pb_number;
     try {
         if (!file_name || file_name.length === 0) {
             res.status(404).json({
@@ -327,15 +326,30 @@ router.post('/analyse', async (req, res) => {
             return;
         }
 
-        const fastapiUrl = `${process.env.FAST_API_ANLYSIS_URL}/analytics`;
+        const response = await axios.post(
+            `${process.env.FAST_API_ANLYSIS_URL}/analytics`,
+            {
+                file_name: file_name,
+                pb_number: req.pb_number,
+                query: snag.query,
+            }
+        );
 
-        // const response = await axios.post(fastapiUrl, {
-        //     file_name,
-        //     pb_number,
-        //     query,
-        // });
+        if (!response || response.status !== 200) {
+            res.status(500).json({
+                msg: 'Analysis could not be fetched',
+            });
+            return;
+        }
 
-        // res.status(200).json(response.data);
+        const analysisData = response.data;
+
+		
+
+        res.status(200).json({
+            msg: 'Analysis fetched successfully',
+            analysis: analysisData,
+        });
     } catch (error) {
         console.error(
             'Error communicating with FastAPI backend:',

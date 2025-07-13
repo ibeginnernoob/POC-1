@@ -33,6 +33,29 @@ const snagSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    analytics: {
+        total_similar_cases_found: {
+            type: String,
+            default: 0,
+        },
+        average_similarity_percentage: {
+            type: String,
+            default: 0,
+        },
+        highest_similarity_percentage: {
+            type: String,
+            default: 0,
+        },
+        lowest_similarity_percentage: {
+            type: String,
+            default: 0,
+        },
+        recommendation_reliability: {
+            type: String,
+            default: 0,
+        },
+    },
+    graphs: Schema.Types.Mixed,
 });
 
 const Snag = model('Snag', snagSchema);

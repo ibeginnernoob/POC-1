@@ -19,6 +19,7 @@ export default function Snag() {
     const navigate = useNavigate();
     const { isAuth, isLoading: isLoadingIsAuth } = useIsAuth();
     const { snagDetails, isLoading } = useFetch(snagId);
+
     const [openHistSnags, setOpenHistSnags] = useState(false);
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
