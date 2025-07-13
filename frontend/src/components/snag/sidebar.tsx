@@ -22,7 +22,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import type { SnagDetails } from '@/types/snag';
 import { formatDistanceToNow } from 'date-fns';
-
+import { useDeleteSnag } from '@/hooks/useDeleteSnag';
 interface ChatItem {
     id: string;
     title: string;
@@ -45,12 +45,13 @@ export default function Sidebar() {
     const { snags, isLoading } = useFetchAllSnags();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeChat, setActiveChat] = useState<string | null>('1');
-
+    const { deleteSnag, loading, error } = useDeleteSnag();
+    const [tempSnags, setTempSnags] = useState(snags || []);
     const chats = formatSnagsForSidebar(snags);
     const filteredChats = chats.filter((chat) =>
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    console.log(snags);
+    console.log(snags); 
 
     const handleChatSelect = (chatId: string) => {
         setActiveChat(chatId);
@@ -58,18 +59,23 @@ export default function Sidebar() {
         // Logic to load chat
     };
 
-    const handleDeleteChat = (chatId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        // Logic to delete chat
+    interface DeleteResponse {
+        success: boolean;
+    }
+
+    const handleDelete = async (id: string): Promise<void> => {
+        const confirmed = window.confirm("Are you sure you want to delete this snag?");
+        if (!confirmed) return;
+
+        const res: DeleteResponse = await deleteSnag(id);
+        if (res.success) {
+            setTempSnags((prev) => prev.filter((s) => s._id !== id));
+        }
     };
 
-    const handleRenameChat = (chatId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        // Logic to rename chat
-    };
 
     return (
-        <div className="flex flex-col h-screen w-80 bg-background border-r border-border">
+        <div className="flex flex-col h-screen w-64 sm:w-64  lg:w-96 md:w-72 bg-background border-r border-border">
             {/* Header with New Chat Button */}
             {location.pathname !== '/new' && (
                 <div className="p-3 border-b border-border">
@@ -119,13 +125,9 @@ export default function Sidebar() {
                                     size={16}
                                     className="flex-shrink-0"
                                 />
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium truncate">
-                                        {chat.title}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {chat.timestamp}
-                                    </p>
+                              <div className="flex-1 max-w-[25%] md:max-w-[30%] lg:max-w-[45%] truncate">
+                                    <p className="text-sm font-medium truncate">{chat.title}</p>
+                                    <p className="text-xs text-muted-foreground">{chat.timestamp}</p>
                                 </div>
 
                                 {/* Chat Actions Menu */}
@@ -134,7 +136,7 @@ export default function Sidebar() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 hover:bg-gray-300 flex-shrink-0"
+                                            className="opacity-100 md:opacity-0  md:group-hover:opacity-100 h-6 w-6 p-0 hover:bg-gray-300 flex-shrink-0"
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <MoreHorizontal size={14} />
@@ -145,24 +147,14 @@ export default function Sidebar() {
                                         className="w-52 bg-popover border border-border shadow-md"
                                         side="bottom"
                                         sideOffset={5}
-                                        style={{ zIndex: 9999 }}
+                                        style={{ zIndex: 9999,opacity:1 }}
                                     >
                                         <DropdownMenuItem
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleRenameChat(chat.id, e);
+                                                handleDelete(chat.id);
                                             }}
-                                            className="cursor-pointer hover:bg-muted"
-                                        >
-                                            <Edit3 size={14} className="mr-2" />
-                                            Rename
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDeleteChat(chat.id, e);
-                                            }}
-                                            className="text-destructive focus:text-destructive cursor-pointer hover:bg-muted"
+                                            className="text-destructive bg-black focus:text-destructive cursor-pointer "
                                         >
                                             <Trash2
                                                 size={14}

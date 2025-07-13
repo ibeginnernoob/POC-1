@@ -109,6 +109,33 @@ router.get("/fetch-sidebar", async (req, res, next) => {
   }
 });
 
+router.delete("/delete-snag/:id", async (req, res) => {
+  try {
+    console.log("🔍 DELETE /snag/delete-snag/:id route hit");
+    console.log("Snag ID:", req.params.id);
+    console.log("User ID:", req.userId);
+    const snagId = req.params.id;
+    const userId = req.userId; 
+
+    if (!userId) {
+      res.status(401).json({ msg: "Unauthorized: No userId found" });
+      return
+    }
+
+    const deleted = await Snag.findOneAndDelete({ _id: snagId, userId });
+
+    if (!deleted) {
+      res.status(404).json({ msg: "Snag not found or already deleted" });
+      return
+    }
+
+    res.status(200).json({ msg: "Snag deleted successfully", deletedId: snagId });
+  } catch (error) {
+    console.error("❌ Error deleting snag:", error);
+    res.status(500).json({ msg: "Failed to delete snag" });
+  }
+});
+
 
 
 router.get("/fetch/:snagId", async (req, res, next) => {
@@ -117,7 +144,7 @@ router.get("/fetch/:snagId", async (req, res, next) => {
     console.log("Fetching snag for snagId:", snagId);
 
     const snag = await Snag.findById(snagId);
-
+    
     console.log(snag);
 
     if (!snag) {
@@ -200,32 +227,7 @@ router.post("/upload-file", async (req, res, next) => {
     }
 })})});
 
-router.get('/fetch-sidebar', async (req, res, next) => {
-    try {
-        const userId = req.userId; // 👈 ensure this is set via middleware
 
-        if (!userId) {
-            res.status(401).json({
-                msg: 'Unauthorized: No userId found in request',
-            });
-            return;
-        }
-
-        const snags = await Snag.find({ userId }).sort({ createdAt: -1 });
-
-        console.log('Fetching snags for userId:', userId);
-
-        res.status(200).json({
-            msg: 'Snag details found successfully',
-            snags,
-        });
-    } catch (e: any) {
-        console.error('❌ Error fetching snags:', e);
-        res.status(500).json({
-            msg: 'Snag details could not be retrieved',
-        });
-    }
-});
 
 router.get('/fetch/:snagId', async (req, res, next) => {
     try {
