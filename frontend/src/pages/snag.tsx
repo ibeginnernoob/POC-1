@@ -10,15 +10,18 @@ import Loader from '@/components/ui/loader';
 import { useNavigate } from 'react-router';
 import useFetch from '@/hooks/useFetch';
 import SimilarSnagsList from '@/components/snag/SimilarSnagsList.tsx';
-import { useFetchAnalysis } from '@/hooks/useFetchAnalysis';
 import AnalyticsModal from '@/components/snag/analyticsModal';
+import axios from 'axios';
 
 export default function Snag() {
     const { snagId } = useParams();
 
     const navigate = useNavigate();
     const { isAuth, isLoading: isLoadingIsAuth } = useIsAuth();
-    const { snagDetails, isLoading } = useFetch(snagId);
+
+    const [snagFetchRunner, setSnagFetchRunner] = useState<number>(0);
+    const { snagDetails, isLoading } = useFetch(snagId, snagFetchRunner);
+    const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
 
     const [openHistSnags, setOpenHistSnags] = useState(false);
     const [openAnalytics, setOpenAnalytics] = useState(false);
@@ -40,6 +43,42 @@ export default function Snag() {
         }
     }, [isAuth]);
 
+    useEffect(() => {
+        const fetchAnalysis = async () => {
+            try {
+                setIsLoadingAnalysis(true);
+                const token = localStorage.getItem('token');
+                const res = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/snag/analyse`,
+                    {
+                        file_name: snagDetails?.filename || '',
+                        snagId: snagDetails?._id || '',
+                    },
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+
+                if (!res || res.status !== 200) {
+                    throw new Error('Failed to fetch analysis');
+                }
+
+                setSnagFetchRunner((prev) => prev + 1);
+            } catch (e: any) {
+                console.log(e);
+                setOpenAnalytics(false);
+            } finally {
+                setIsLoadingAnalysis(false);
+            }
+        };
+
+        if (!snagDetails?.isAnalysisFetch && openAnalytics) {
+            fetchAnalysis();
+        }
+    }, [openAnalytics]);
+
     if (isLoading || isLoadingIsAuth) {
         return (
             <div className="h-screen w-screen flex justify-center items-center bg-white">
@@ -56,14 +95,14 @@ export default function Snag() {
             <Modal open={sidebarOpen} onClose={handleSidebarClose}>
                 <Fade in={sidebarOpen}>
                     <Box sx={sidebarStyles}>
-                        <Sidebar />
+                        <Sidebar setSideBarOpen={setSidebarOpen} />
                     </Box>
                 </Fade>
             </Modal>
             <Modal open={openAnalytics} onClose={() => setOpenAnalytics(false)}>
                 <Fade in={openAnalytics}>
                     <Box sx={analyticsStyles}>
-                        <AnalyticsModal />
+                        <AnalyticsModal isLoading={isLoadingAnalysis} />
                     </Box>
                 </Fade>
             </Modal>

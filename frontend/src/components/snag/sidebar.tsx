@@ -39,7 +39,11 @@ function formatSnagsForSidebar(snags: SnagDetails[]): ChatItem[] {
     }));
 }
 
-export default function Sidebar() {
+export default function Sidebar({
+	setSideBarOpen
+} : {
+	setSideBarOpen: (open: boolean) => void;
+}) {
     const navigate = useNavigate();
     const location = useLocation();
     const { snags, isLoading } = useFetchAllSnags();
@@ -49,20 +53,19 @@ export default function Sidebar() {
     const [snagsState, setSnagsState] = useState(snags || []);
     useEffect(() => {
         if (snags) {
-          setSnagsState(snags);
+            setSnagsState(snags);
         }
-      }, [snags]);
+    }, [snags]);
     const chats = formatSnagsForSidebar(snagsState);
-   
+
     const filteredChats = chats.filter((chat) =>
         chat.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-
     const handleChatSelect = (chatId: string) => {
         setActiveChat(chatId);
+		setSideBarOpen(false);
         navigate(`/snag/${chatId}`);
-        // Logic to load chat
     };
 
     interface DeleteResponse {
@@ -70,19 +73,20 @@ export default function Sidebar() {
     }
 
     const handleDelete = async (id: string): Promise<void> => {
-        const confirmed = window.confirm("Are you sure you want to delete this snag?");
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this snag?'
+        );
         if (!confirmed) return;
 
         const res: DeleteResponse = await deleteSnag(id);
         if (res.success) {
             setSnagsState((prev) => prev.filter((s) => s._id !== id));
-            console.log(snags)
+            console.log(snags);
         }
     };
 
-
     return (
-        <div className="flex flex-col h-screen w-64 sm:w-64  lg:w-96 md:w-72 bg-background border-r border-border">
+        <div className="flex flex-col h-screen w-64 sm:w-64 bg-background border-r border-border">
             {/* Header with New Chat Button */}
             {location.pathname !== '/new' && (
                 <div className="p-3 border-b border-border">
@@ -90,9 +94,9 @@ export default function Sidebar() {
                         onClick={() => {
                             navigate('/new');
                         }}
-                        className="w-full justify-start gap-2 bg-blue-400 hover:bg-blue-600 text-primary-foreground"
+                        className="w-full text-sm justify-start gap-2 bg-blue-400 hover:bg-blue-600 text-primary-foreground text-white"
                     >
-                        <Plus size={16} />
+                        <Plus color="white" size={16} />
                         New Chat
                     </Button>
                 </div>
@@ -109,32 +113,39 @@ export default function Sidebar() {
                         placeholder="Search conversations..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 bg-gray-100 border-none focus-visible:ring-1 focus-visible:ring-ring"
+                        className="pl-9 bg-gray-100 text-sm border-none focus-visible:ring-1 focus-visible:ring-ring"
                     />
                 </div>
             </div>
 
             {/* Chat History */}
-            <ScrollArea className="flex-1 px-2">
+            <div className="w-[100%]">
                 <div className="space-y-1 py-2">
                     {filteredChats.length > 0 ? (
                         filteredChats.map((chat) => (
                             <div
                                 key={chat.id}
                                 onClick={() => handleChatSelect(chat.id)}
-                                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 cursor-pointer transition-colors hover:bg-muted/50 ${
+                                className={`group relative flex items-start justify-between rounded-lg px-3 py-2.5 cursor-pointer transition-colors hover:bg-muted/50 ${
                                     activeChat === chat.id
                                         ? 'bg-muted text-foreground'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
                             >
-                                <MessageSquare
-                                    size={16}
-                                    className="flex-shrink-0"
-                                />
-                              <div className="flex-1 max-w-[25%] md:max-w-[30%] lg:max-w-[45%] truncate">
-                                    <p className="text-sm font-medium truncate">{chat.title}</p>
-                                    <p className="text-xs text-muted-foreground">{chat.timestamp}</p>
+                                <div className="flex flex-row items-center gap-2">
+                                    <MessageSquare
+                                        size={16}
+                                        className="flex-shrink-0"
+                                    />
+                                    <div className="">
+                                        <p className="text-sm font-medium truncate">
+                                            {chat.title.slice(0, 20) + '...' ||
+                                                'Untitled Snag'}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {chat.timestamp}
+                                        </p>
+                                    </div>
                                 </div>
 
                                 {/* Chat Actions Menu */}
@@ -154,7 +165,7 @@ export default function Sidebar() {
                                         className="w-52 bg-popover bg-white border border-border shadow-md"
                                         side="bottom"
                                         sideOffset={5}
-                                        style={{ zIndex: 9999,opacity:1 }}
+                                        style={{ zIndex: 9999, opacity: 1 }}
                                     >
                                         <DropdownMenuItem
                                             onClick={(e) => {
@@ -183,7 +194,7 @@ export default function Sidebar() {
                         </div>
                     )}
                 </div>
-            </ScrollArea>
+            </div>
         </div>
     );
 }

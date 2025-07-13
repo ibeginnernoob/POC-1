@@ -33,6 +33,10 @@ const snagSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    based_on_historical_cases: {
+        type: String,
+        default: 0,
+    },
     analytics: {
         total_similar_cases_found: {
             type: String,

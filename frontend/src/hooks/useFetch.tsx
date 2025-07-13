@@ -8,7 +8,7 @@ type ResBody = {
     pb_number?: string;
 };
 
-const useFetch = (snagId: string | undefined) => {
+const useFetch = (snagId: string | undefined, snagRunner: number) => {
     const [isLoading, setIsLoading] = useState(true);
     // const [isError, setIsError] = useState(false);
     const [snagDetails, setSnagDetails] = useState<SnagDetails | null>(null);
@@ -50,7 +50,7 @@ const useFetch = (snagId: string | undefined) => {
         if (snagId && snagId.length > 0) {
             fetchData();
         }
-    }, [snagId]);
+    }, [snagId, snagRunner]);
 
     return {
         snagDetails,

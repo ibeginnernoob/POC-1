@@ -153,152 +153,9 @@ router.post('/rectify', async (req, res, next) => {
 
         const DBRes = await newSnag.save();
 
-    res.status(200).json({
-      msg: "Response successfully generated!",
-      snagId: DBRes._id,
-    });
-  } catch (e: any) {
-    console.log(e);
-    res.status(500).json({
-      msg: "Data could not generated",
-    });
-  }
-});
-
-router.get("/fetch-sidebar", async (req, res, next) => {
-  try {
-    const userId = req.userId; // 👈 ensure this is set via middleware
-
-    if (!userId) {
-      res.status(401).json({ msg: "Unauthorized: No userId found in request" });
-      return;
-    }
-
-    const snags = await Snag.find({ userId }).sort({ createdAt: -1 }); // latest first
-
-    console.log("Fetching snags for userId:", userId);
-
-    res.status(200).json({
-      msg: "Snag details found successfully",
-      snags,
-    });
-  } catch (e: any) {
-    console.error("❌ Error fetching snags:", e);
-    res.status(500).json({
-      msg: "Snag details could not be retrieved",
-    });
-  }
-});
-
-router.delete("/delete-snag/:id", async (req, res) => {
-  try {
-    console.log("🔍 DELETE /snag/delete-snag/:id route hit");
-    console.log("Snag ID:", req.params.id);
-    console.log("User ID:", req.userId);
-    const snagId = req.params.id;
-    const userId = req.userId; 
-
-    if (!userId) {
-      res.status(401).json({ msg: "Unauthorized: No userId found" });
-      return
-    }
-
-    const deleted = await Snag.findOneAndDelete({ _id: snagId, userId });
-
-    if (!deleted) {
-      res.status(404).json({ msg: "Snag not found or already deleted" });
-      return
-    }
-
-    res.status(200).json({ msg: "Snag deleted successfully", deletedId: snagId });
-  } catch (error) {
-    console.error("❌ Error deleting snag:", error);
-    res.status(500).json({ msg: "Failed to delete snag" });
-  }
-});
-
-
-
-router.get("/fetch/:snagId", async (req, res, next) => {
-  try {
-    const snagId = req.params.snagId;
-    console.log("Fetching snag for snagId:", snagId);
-
-    const snag = await Snag.findById(snagId);
-    
-    console.log(snag);
-
-    if (!snag) {
-      res.status(404).json({
-        msg: `Snag with id: ${snagId} could not be found`,
-      });
-      return;
-    }
-
-    res.json({
-      msg: "Snag details found successfully",
-      snagDetails: snag,
-    });
-  } catch (e: any) {
-    console.log(e);
-    res.status(500).json({
-      msg: "Snag details could not be retreived",
-    });
-  }
-});
-
-router.post('/analyse', async (req, res) => {
-    const { file_name, pb_number, query } = req.body;
-  
-    try {
-      const fastapiUrl = `${process.env.FAST_API_ANLYSIS_URL}/analytics`; // Update this if hosted elsewhere
-  
-      const response = await axios.post(fastapiUrl, {
-        file_name,
-        pb_number,
-        query
-      });
-  
-      res.status(200).json(response.data);
-    } catch (error) {
-      console.error("Error communicating with FastAPI backend:", (error as any).message);
-      res.status(500).json({ error: "FastAPI request failed", details: (error as any).message });
-    }
-  });
-  
-  module.exports = router;
-
-router.post("/upload-file", async (req, res, next) => {
-  if (!req.userId) {
-    res.status(401).json({ error: "Unauthorized" });
-  }
-
-  const busboy = Busboy({ headers: req.headers });
-
-  busboy.on("file", async (fieldname, file, info) => {
-    const { filename, encoding, mimeType } = info;
-    const chunks: Buffer[] = [];
-
-    file.on("data", (chunk) => {
-      chunks.push(chunk);
-    });
-
-    file.on("end", async () => {
-      const buffer = Buffer.concat(chunks);
-      const formData = new FormData();
-      const blob = new Blob([buffer], { type: mimeType });
-
-      if (!blob) {
-        return res.status(400).json({ error: "Invalid file data" });
-      }
-
-      formData.append("file", blob, filename);
-      formData.append("pb_number", `${req.pb_number}`);
-
-      try {
-        const response = await fetch(`${process.env.FAST_API_URL}/store_file`, {
-          method: "POST",
-          body: formData,
+        res.status(200).json({
+            msg: 'Response successfully generated!',
+            snagId: DBRes._id,
         });
     } catch (e: any) {
         console.log(e);
@@ -306,7 +163,86 @@ router.post("/upload-file", async (req, res, next) => {
             msg: 'Data could not generated',
         });
     }
-})})});
+});
+
+router.delete('/delete-snag/:id', async (req, res) => {
+    try {
+        const snagId = req.params.id;
+        const userId = req.userId;
+
+        const deleted = await Snag.findOneAndDelete({ _id: snagId, userId });
+
+        if (!deleted) {
+            res.status(404).json({ msg: 'Snag not found or already deleted' });
+            return;
+        }
+
+        res.status(200).json({
+            msg: 'Snag deleted successfully',
+        });
+    } catch (error) {
+        console.error('❌ Error deleting snag:', error);
+        res.status(500).json({ msg: 'Failed to delete snag' });
+    }
+});
+
+router.post('/upload-file', async (req, res, next) => {
+    if (!req.userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const busboy = Busboy({ headers: req.headers });
+
+    busboy.on('file', async (fieldname, file, info) => {
+        const { filename, encoding, mimeType } = info;
+        const chunks: Buffer[] = [];
+
+        file.on('data', (chunk) => {
+            chunks.push(chunk);
+        });
+
+        file.on('end', async () => {
+            const buffer = Buffer.concat(chunks);
+            const formData = new FormData();
+            const blob = new Blob([buffer], { type: mimeType });
+
+            if (!blob) {
+                return res.status(400).json({ error: 'Invalid file data' });
+            }
+
+            formData.append('file', blob, filename);
+            formData.append('pb_number', `${req.pb_number}`);
+
+            try {
+                const response = await fetch(
+                    `${process.env.FAST_API_URL}/store_file`,
+                    {
+                        method: 'POST',
+                        body: formData,
+                    }
+                );
+            } catch (e: any) {
+                console.log(e);
+                res.status(500).json({
+                    msg: 'Data could not generated',
+                });
+            }
+        });
+    });
+});
+
+type AnalysisData = {
+    based_on_historical_cases: string;
+    analytics: {
+        total_similar_cases_found: string;
+        average_similarity_percentage: string;
+
+        highest_similarity_percentage: string;
+        lowest_similarity_percentage: string;
+        recommendation_reliability: string;
+    };
+    graphs: any;
+};
 
 router.post('/analyse', async (req, res) => {
     const { file_name, snagId } = req.body;
@@ -342,9 +278,20 @@ router.post('/analyse', async (req, res) => {
             return;
         }
 
-        const analysisData = response.data;
+        const analysisData: AnalysisData = response.data as AnalysisData;
 
-		
+        snag.isAnalysisFetch = true;
+        snag.based_on_historical_cases = analysisData.based_on_historical_cases;
+        snag.analytics = analysisData.analytics;
+        snag.graphs = analysisData.graphs;
+
+        const saveRes = await snag.save();
+        if (!saveRes) {
+            res.status(500).json({
+                msg: 'Failed to save analysis data to the snag',
+            });
+            return;
+        }
 
         res.status(200).json({
             msg: 'Analysis fetched successfully',

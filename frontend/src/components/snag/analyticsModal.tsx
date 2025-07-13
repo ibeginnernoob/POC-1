@@ -1,15 +1,11 @@
-import React from 'react';
 import Loader from '@/components//ui/loader';
 import { RadarStatsChart } from '@/components/snag/analytics/radarStatsChart';
 import BarStatsChart from '@/components/snag/analytics/barStatsChart';
 import { PieStatsChart } from '@/components/snag/analytics/pieStatsChart';
 import { useState } from 'react';
-import axios from 'axios';
-import { Button } from '@/components/lovable/button';
+// import axios from 'axios';
 
-const AnalyticsModal = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    // const [analyticsData, setAnalyticsData] = React.useState<any>();
+const AnalyticsModal = ({ isLoading }: { isLoading: boolean }) => {
     const data = {
         timestamp: '2025-07-02T19:29:43.963529',
         query: 'Query: TR Vibrations\nHelicopter Type: string\nFlight Hours: string\nEvent Type: string\nStatus: string\nRaised By: string',

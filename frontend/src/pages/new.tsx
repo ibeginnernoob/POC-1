@@ -200,7 +200,7 @@ export default function NewChat() {
             <Modal open={sidebarOpen} onClose={handleSidebarClose}>
                 <Fade in={sidebarOpen}>
                     <Box sx={sidebarStyles}>
-                        <Sidebar />
+                        <Sidebar setSideBarOpen={setSidebarOpen} />
                     </Box>
                 </Fade>
             </Modal>
