@@ -86,11 +86,18 @@ export default function Snag() {
                 </Fade>
             </Modal>
             <div className={`w-[100%] overflow-y-auto h-[100vh]`}>
-                <Header handleSidebarOpen={handleSidebarOpen} isNew={false} setOpen={setOpen}/>
+                <Header
+                    handleSidebarOpen={handleSidebarOpen}
+                    isNew={false}
+                    setOpen={setOpen}
+                />
                 <Chat isNew={false} snagDetails={snagDetails} />
-                <SimilarSnagsList open={open} setOpen={setOpen} data={similar_historical_snags || []} />
-        
-        </div>
+                <SimilarSnagsList
+                    open={open}
+                    setOpen={setOpen}
+                    data={similar_historical_snags || []}
+                />
+            </div>
         </div>
     );
 }

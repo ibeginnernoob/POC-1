@@ -24,7 +24,7 @@ const useFetchAllSnags = () => {
           throw new Error('No auth token found.');
         }
 
-        const res = await axios.get<ResBody>(`http://localhost:3000/snag/fetch-sidebar`, {
+        const res = await axios.get<ResBody>(`${import.meta.env.VITE_BACKEND_URL}/snag/fetch-sidebar`, {
           headers: {
             Authorization: token,
           },

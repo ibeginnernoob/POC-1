@@ -220,7 +220,7 @@ export default function NewChat() {
                     </Box>
                 </Fade>
             </Modal>
-            <Header
+            <Header			
                 handleSidebarOpen={handleSidebarOpen}
                 handleFileSelect={handleUploadFileSelect}
                 fileUploadRef={fileUpload}
