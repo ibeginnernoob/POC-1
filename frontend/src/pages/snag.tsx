@@ -12,7 +12,6 @@ import useFetch from '@/hooks/useFetch';
 import SimilarSnagsList from '@/components/snag/SimilarSnagsList.tsx';
 import React from 'react';
 import { useFetchAnalysis } from '@/hooks/useFetchAnalysis';
-
 import axios from 'axios';
 
 export default function Snag() {
@@ -23,14 +22,9 @@ export default function Snag() {
     const { snagDetails, isLoading } = useFetch(snagId);
     const [open, setOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [analyticsData, setAnalyticsData] = React.useState<any>();
-    const { analyseSnag, data, loading, error } = useFetchAnalysis();
 
-    const similar_historical_snags = snagDetails?.similar_historical_snags;
-    const handleShowAnalysis = async (e:any) => {
-        e.preventDefault();
-        await analyseSnag({ file_name: fileName, pb_number: pbNumber, query });
-    }
+    const similar_historical_snags = snagDetails?.similar_historical_snags || [];
+
     const handleSidebarOpen = () => {
         setSidebarOpen(true);
     };

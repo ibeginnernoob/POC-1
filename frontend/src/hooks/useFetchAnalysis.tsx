@@ -1,28 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export const useFetchAnalysis = () => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+export const useFetchAnalysis = (snagId: string, filename: string) => {
+    const [loading, setLoading] = useState(false);
+    const [analysisData, setAnalysisData] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
 
-  const analyseSnag = async ({ file_name, pb_number, query }: { file_name: string; pb_number: string; query: string }) => {
-    setLoading(true);
-    setError(null);
+    useEffect(() => {
+        const fetchAnalysis = async () => {
+            setLoading(true);
+            try {
+				const token = localStorage.getItem('token');
 
-    try {
-      const response = await axios.post('/snag/analyse', {
-        file_name,
-        pb_number,
-        query
-      });
-      setData(response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  };
+                const response = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/analysis`, {
+						file_name: filename,
+						snagId: snagId
+					}, {
+						headers: {
+							Authorization: token || '',
+						}
+					}
+                );
+                setAnalysisData(response.data);
+            } catch (err: any) {
+                setError(
+                    err.msg ||
+                        err.message ||
+                        'An error occurred while fetching analysis data'
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return { analyseSnag, data, loading, error };
+        if (analysisData === null) {
+            fetchAnalysis();
+        }
+    }, [analysisData, loading, error]);
+
+    return { analysisData, loading, error };
 };

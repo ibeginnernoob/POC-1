@@ -92,7 +92,7 @@ export default function NewChat() {
 
             const token = localStorage.getItem('token');
             const res = await axios.post(
-                'http://localhost:3000/snag/upload-file',
+                `${import.meta.env.VITE_BACKEND_URL}/snag/upload-file`,
                 formData,
                 {
                     headers: {
@@ -145,13 +145,13 @@ export default function NewChat() {
             }
 
             const properties = Object.entries(dialogValues)
-                .map(([key, value]) => `${key}:${value}`)
+                .map(([key, value]) => `${key}: ${value}`)
                 .join(', ');
 
             let prompt = `query: ${query} \n ${properties}`;
 
             const res = await axios.post(
-                'http://localhost:3000/snag/rectify',
+                `${import.meta.env.VITE_BACKEND_URL}/snag/rectify`,
                 {
                     filename: selectedFiles[0],
                     prompt: prompt,

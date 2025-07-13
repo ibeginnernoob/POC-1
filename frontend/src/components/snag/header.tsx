@@ -12,7 +12,7 @@ export default function Header({
     handleFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     fileUploadRef?: React.RefObject<HTMLInputElement>;
     isNew: boolean;
-    setOpen: Dispatch<React.SetStateAction<boolean>>;
+    setOpen?: Dispatch<React.SetStateAction<boolean>>;
 }) {
     const handleInputActive = () => {
         if (fileUploadRef && fileUploadRef.current) {
@@ -67,7 +67,7 @@ export default function Header({
                     <div className="flex gap-6">
                         <div className="flex flex-row items-center">
                             <Button
-                                onClick={() => setOpen(true)}
+                                onClick={() => setOpen?.(true)}
                                 className="px-2.5 py-1.5 text-nowrap text-black text-xs font-roboto font-medium border border-solid border-black rounded-md md:text-sm hover:bg-slate-100 duration-200"
                             >
                                 Historical Cases

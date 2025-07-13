@@ -1,6 +1,8 @@
 export type SnagDetails = {
     _id: string;
     userId: string;
+	pb_number: string;
+	filename: string;
     timestamp: string;
     query: string;
     rectification: {
