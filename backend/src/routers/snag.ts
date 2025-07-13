@@ -306,7 +306,7 @@ router.post("/upload-file", async (req, res, next) => {
             msg: 'Data could not generated',
         });
     }
-});
+})})});
 
 router.post('/analyse', async (req, res) => {
     const { file_name, snagId } = req.body;
