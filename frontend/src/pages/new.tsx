@@ -145,10 +145,11 @@ export default function NewChat() {
             }
 
             const properties = Object.entries(dialogValues)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join(', ');
+            .filter(([_, value]) => value !== null && value !== undefined)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
 
-            let prompt = `query: ${query} \n ${properties}`;
+            let prompt = `snag: ${query} \n ${properties}`;
 
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/snag/rectify`,

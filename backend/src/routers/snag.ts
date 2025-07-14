@@ -263,7 +263,7 @@ router.post('/analyse', async (req, res) => {
         }
 
         const response = await axios.post(
-            `${process.env.FAST_API_ANLYSIS_URL}/analytics`,
+            `${process.env.FAST_API_URL}/analytics`,
             {
                 file_name: file_name,
                 pb_number: req.pb_number,
