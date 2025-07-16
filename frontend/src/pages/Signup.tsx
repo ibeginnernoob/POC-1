@@ -75,21 +75,26 @@ const SignupPage = () => {
         }
     };
 
-    if (isLoading || isLoadingIsAuth) {
-        return (
-            <div className="h-screen w-screen bg-white">
-                <Loader />
-            </div>
-        );
-    }
+    // if (isLoading || isLoadingIsAuth) {
+    //     return (
+    //         <div className="h-screen w-screen bg-white">
+    //             <Loader />
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="flex flex-row w-screen overflow-y-auto">
-            <div className="hidden flex-1 md:block">
+            <div className="hidden flex-col flex-1 md:flex">
                 <img
-                    src={'../../../public/imgs/auth-tejas.png'}
+                    src={'../../../public/imgs/hma.jpeg'}
                     alt="Technology background"
-                    className="w-full h-full object-cover"
+                    className="flex-1"
+                />
+                <img
+                    src={'../../../public/imgs/iiit.jpeg'}
+                    alt="Technology background"
+                    className="flex-1"
                 />
             </div>
 
@@ -97,11 +102,21 @@ const SignupPage = () => {
                 <div className="flex-1 flex flex-col gap-10 mt-10">
                     {/* logo */}
                     <div className="px-10">
-                        <img
-                            src={'../../../public/imgs/hal-logo.png'}
-                            alt="HAL Logo"
-                            className="h-12 sm:h-16 w-auto"
-                        />
+                        <div className="flex flex-row gap-2 items-center">
+                            <img
+                                src={'../../../public/imgs/hal-logo.png'}
+                                alt="HAL Logo"
+                                className="h-12 sm:h-16 w-auto"
+                            />
+                            <img
+                                src={'../../../public/imgs/iiit-logo.png'}
+                                alt="IIIT DWD Logo"
+                                className="h-16 sm:h-20 w-auto"
+                            />
+                        </div>
+                        <p className="font-bold">
+                            {'CENTER OF EXCELLENCE FOR AI'}
+                        </p>
                     </div>
 
                     {/* form */}
