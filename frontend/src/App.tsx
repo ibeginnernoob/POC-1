@@ -5,7 +5,6 @@ import SignupPage from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import Snag from "./pages/snag";
-import Analytics from "./pages/analytics";
 import Test from "./pages/test";
 import '@/index.css'
 
@@ -18,7 +17,6 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="/analytics" element={<Analytics />} />
 	  <Route path="/test" element={<Test />} />
     </Routes>
   );
