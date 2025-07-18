@@ -8,9 +8,7 @@ import {
 } from '@/components/lovable/card';
 import { Badge } from '@/components/lovable/badge';
 import { Button } from '@/components/lovable/button';
-import {
-  Sidebar,
-} from "@/components/lovable/sidebar"; // update the path as needed
+
 import { IconHome, IconInfoCircle, IconPhoneCall } from "@tabler/icons-react";
 import {Header} from '@/components/ui/header';
 import { useScroll, useTransform } from "motion/react";
@@ -28,7 +26,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import useIsAuth from '@/hooks/useIsAuth';
 import AirplaneCanvas from '@/components/ui/AirplaneCanvas';
-import { SidebarProvider, SidebarTrigger } from '@/components/lovable/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/lovable/sidebareal';
 import { AppSidebar } from '@/components/ui/AppSidebar';
 import React from 'react';
 
@@ -150,9 +148,15 @@ const Landing = () => {
     };
 
     return (
-        <div className="">
+        <SidebarProvider>
+        
+        <AppSidebar/>
+        <SidebarTrigger/>
+        
+          {/* Main content that fills remaining width */}
+          <div className='w-screen'>
 
-            <Header />
+          <Header />
       
             <div
               className="h-[400vh] w-full dark:border rounded-md relative pt-40 overflow-clip"
@@ -181,6 +185,7 @@ const Landing = () => {
               </div>
             </footer>
           </div>
+          </SidebarProvider>
       );
       
 };

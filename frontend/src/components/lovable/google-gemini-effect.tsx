@@ -42,7 +42,7 @@ export const GoogleGeminiEffect = ({
     },
   ];
   return (
-    <div className={cn("sticky top-80 w-screen", className)}>
+    <div className={cn("sticky top-80 w-full", className)}>
       <div className="flex flex-col items-center ">
         <TypewriterEffectSmooth words={words} />
       </div>
