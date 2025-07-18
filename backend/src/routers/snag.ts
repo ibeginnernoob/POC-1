@@ -149,6 +149,8 @@ router.post('/rectify', async (req, res, next) => {
 
         console.log('Generated Data file name:', generatedData.filename);
 
+        console.log(generatedData);
+
         const newSnag = new Snag(generatedData);
 
         const DBRes = await newSnag.save();
@@ -184,51 +186,6 @@ router.delete('/delete-snag/:id', async (req, res) => {
         console.error('❌ Error deleting snag:', error);
         res.status(500).json({ msg: 'Failed to delete snag' });
     }
-});
-
-router.post('/upload-file', async (req, res, next) => {
-    if (!req.userId) {
-        res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const busboy = Busboy({ headers: req.headers });
-
-    busboy.on('file', async (fieldname, file, info) => {
-        const { filename, encoding, mimeType } = info;
-        const chunks: Buffer[] = [];
-
-        file.on('data', (chunk) => {
-            chunks.push(chunk);
-        });
-
-        file.on('end', async () => {
-            const buffer = Buffer.concat(chunks);
-            const formData = new FormData();
-            const blob = new Blob([buffer], { type: mimeType });
-
-            if (!blob) {
-                return res.status(400).json({ error: 'Invalid file data' });
-            }
-
-            formData.append('file', blob, filename);
-            formData.append('pb_number', `${req.pb_number}`);
-
-            try {
-                const response = await fetch(
-                    `${process.env.FAST_API_URL}/store_file`,
-                    {
-                        method: 'POST',
-                        body: formData,
-                    }
-                );
-            } catch (e: any) {
-                console.log(e);
-                res.status(500).json({
-                    msg: 'Data could not generated',
-                });
-            }
-        });
-    });
 });
 
 type AnalysisData = {

@@ -85,7 +85,7 @@ const SignupPage = () => {
 
     return (
         <div className="flex flex-row w-screen overflow-y-auto">
-            <div className="hidden flex-col flex-1 md:flex">
+            <div className="hidden flex-col h-screen flex-1 md:flex">
                 <img
                     src={'../../../public/imgs/hma.jpeg'}
                     alt="Technology background"
