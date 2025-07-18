@@ -106,13 +106,13 @@ export default function Snag() {
                     </Box>
                 </Fade>
             </Modal>
+            <Header
+                handleSidebarOpen={handleSidebarOpen}
+                isNew={false}
+                setOpenHistSnags={setOpenHistSnags}
+                setOpenAnalytics={setOpenAnalytics}
+            />
             <div className={`w-[100%] overflow-y-auto h-[100vh]`}>
-                <Header
-                    handleSidebarOpen={handleSidebarOpen}
-                    isNew={false}
-                    setOpenHistSnags={setOpenHistSnags}
-                    setOpenAnalytics={setOpenAnalytics}
-                />
                 <Chat isNew={false} snagDetails={snagDetails} />
                 <SimilarSnagsList
                     open={openHistSnags}

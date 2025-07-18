@@ -83,6 +83,7 @@ export default function NewChat() {
 
     const handleFileUpload = async () => {
         if (!uploadFile) {
+			console.error('No file selected for upload');
             return;
         }
         try {
@@ -145,9 +146,9 @@ export default function NewChat() {
             }
 
             const properties = Object.entries(dialogValues)
-            .filter(([_, value]) => value !== null && value !== undefined)
-            .map(([key, value]) => `${key}: ${value}`)
-            .join(', ');
+                .filter(([_, value]) => value !== null && value !== undefined)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(', ');
 
             let prompt = `snag: ${query} \n ${properties}`;
 
@@ -221,7 +222,7 @@ export default function NewChat() {
                     </Box>
                 </Fade>
             </Modal>
-            <Header			
+            <Header
                 handleSidebarOpen={handleSidebarOpen}
                 handleFileSelect={handleUploadFileSelect}
                 fileUploadRef={fileUpload}

@@ -1,6 +1,8 @@
-import { Wrench, PanelRight } from 'lucide-react';
+import { Wrench, PanelRight, Upload } from 'lucide-react';
 import { Button } from '@/components/lovable/button';
 import type { Dispatch } from 'react';
+import { BorderBeam } from '../magicui/border-beam';
+
 export default function Header({
     handleSidebarOpen,
     handleFileSelect,
@@ -23,14 +25,14 @@ export default function Header({
     };
 
     return (
-        <div className="w-[100%] py-3 border-b-[0.5px] border-solid border-gray-300">
-            <div className="max-w-4xl mx-auto px-8 flex flex-row items-center justify-between gap-4">
-                <div className="flex flex-row items-center gap-3">
+        <div className="w-[100%] py-5 border-b-[0.5px] border-solid border-gray-300">
+            <div className="max-w-[75%] mx-auto px-8 flex flex-row items-center justify-between gap-4">
+                <div className="flex flex-row items-center gap-10">
                     <button
                         className="flex justify-center items-center bg-white p-2 rounded-full hover:bg-gray-100 duration-200"
                         onClick={handleSidebarOpen}
                     >
-                        <PanelRight size={16} />
+                        <PanelRight size={18} />
                     </button>
 
                     <div className="items-center gap-3 hidden sm:flex">
@@ -38,13 +40,13 @@ export default function Header({
                             <Wrench className="h-6 w-6 text-white" />
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-lg font-bold text-slate-800 sm:text-xl">
-                                AI Snag Report Analyzer
+                            <h1 className="text-2xl font-bold text-slate-800">
+                                Snag Rectification AI
                             </h1>
-                            <p className="text-xs text-slate-600 sm:text-sm">
+                            {/* <p className="text-xs text-slate-600 sm:text-sm">
                                 Natural Language Processing for Construction
                                 Management
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>
@@ -59,9 +61,15 @@ export default function Header({
                         />
                         <button
                             onClick={() => handleInputActive()}
-                            className="px-2.5 py-1.5 text-nowrap text-black text-xs font-roboto font-medium border border-solid border-black rounded-md md:text-sm hover:bg-slate-100 duration-200"
+                            className="relative overflow-hidden text-nowrap flex flex-row gap-4 py-3 px-4 text-black text-sm font-roboto font-medium border border-solid border-black rounded-md hover:bg-slate-100 duration-200"
                         >
-                            Upload
+                            <Upload size={16} />
+                            Upload File
+                            <BorderBeam
+                                duration={10}
+                                size={1000}
+                                className="bg-red-500"
+                            />
                         </button>
                     </div>
                 )}
