@@ -10,12 +10,9 @@ import { Badge } from '@/components/lovable/badge';
 import { Button } from '@/components/lovable/button';
 import {
   Sidebar,
-  SidebarBody,
-  SidebarLink,
 } from "@/components/lovable/sidebar"; // update the path as needed
 import { IconHome, IconInfoCircle, IconPhoneCall } from "@tabler/icons-react";
 import {Header} from '@/components/ui/header';
-"use client";
 import { useScroll, useTransform } from "motion/react";
 import { GoogleGeminiEffect } from '@/components/lovable/google-gemini-effect';
 import {
@@ -31,6 +28,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import useIsAuth from '@/hooks/useIsAuth';
 import AirplaneCanvas from '@/components/ui/AirplaneCanvas';
+import { SidebarProvider, SidebarTrigger } from '@/components/lovable/sidebar';
+import { AppSidebar } from '@/components/ui/AppSidebar';
 import React from 'react';
 
 const Landing = () => {
@@ -151,39 +150,39 @@ const Landing = () => {
     };
 
     return (
-        <main>
-            {/* Header */}
-            <Header/>
+        <div className="">
 
-
+            <Header />
+      
             <div
-            className="h-[400vh] w-screen dark:border  rounded-md relative pt-40 overflow-clip"
-            ref={ref}
+              className="h-[400vh] w-full dark:border rounded-md relative pt-40 overflow-clip"
+              ref={ref}
             >
-            <GoogleGeminiEffect
+              <GoogleGeminiEffect
                 pathLengths={[
-                pathLengthFirst,
-                pathLengthSecond,
-                pathLengthThird,
-                pathLengthFourth,
-                pathLengthFifth,
+                  pathLengthFirst,
+                  pathLengthSecond,
+                  pathLengthThird,
+                  pathLengthFourth,
+                  pathLengthFifth,
                 ]}
-            />
+              />
             </div>
-
+      
             {/* Footer */}
             <footer className="border-t border-gray-200 bg-white/80 backdrop-blur-sm mt-20">
-                <div className="container mx-auto px-6 py-8">
-                    <div className="text-center text-gray-600">
-                        <p>
-                            &copy; 2025 AircraftAI Management System. Ensuring
-                            aviation safety through intelligent technology.
-                        </p>
-                    </div>
+              <div className="container mx-auto px-6 py-8">
+                <div className="text-center text-gray-600">
+                  <p>
+                    &copy; 2025 AircraftAI Management System. Ensuring aviation safety
+                    through intelligent technology.
+                  </p>
                 </div>
+              </div>
             </footer>
-        </main>
-    );
+          </div>
+      );
+      
 };
 
 export default Landing;
