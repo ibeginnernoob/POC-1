@@ -1,34 +1,34 @@
-import { PlaceholdersAndVanishInput } from '@/components/adheils-cumponents/placeholders-and-vanish-input';
+import { PlaceholdersAndVanishInput } from "@/components/adheils-cumponents/placeholders-and-vanish-input";
 // import TypewriterDemo from '@/components/adheils-cumponents/typewriter-claude';
 
-import { TypewriterEffect } from '@/components/adheils-cumponents/typewriter-effect';
+import { TypewriterEffect } from "@/components/adheils-cumponents/typewriter-effect";
 
 export default function TypewriterEffectDemo() {
-    const words = [
-        {
-            text: 'Build',
-            className: 'text-base text-blue-500 dark:text-blue-500',
-        },
-        {
-            text: 'awesome',
-            className: 'text-blue-500 dark:text-blue-500',
-        },
-        {
-            text: 'apps',
-            className: 'text-blue-500 dark:text-blue-500',
-        },
-        {
-            text: 'with',
-            className: 'text-blue-500 dark:text-blue-500',
-        },
-        {
-            text: 'Aceternity.',
-            className: 'text-blue-500 dark:text-blue-500',
-        },
-    ];
-    return (
-        <div className="flex flex-col items-center justify-center h-[40rem] ">
-            {/* <p className="text-neutral-600 dark:text-neutral-200 text-base  mb-10">
+  const words = [
+    {
+      text: "Build",
+      className: "text-base text-blue-500 dark:text-blue-500",
+    },
+    {
+      text: "awesome",
+      className: "text-blue-500 dark:text-blue-500",
+    },
+    {
+      text: "apps",
+      className: "text-blue-500 dark:text-blue-500",
+    },
+    {
+      text: "with",
+      className: "text-blue-500 dark:text-blue-500",
+    },
+    {
+      text: "Aceternity.",
+      className: "text-blue-500 dark:text-blue-500",
+    },
+  ];
+  return (
+    <div className="flex flex-col items-center justify-center h-[40rem] ">
+      {/* <p className="text-neutral-600 dark:text-neutral-200 text-base  mb-10">
                 The road to freedom starts from here
             </p>
             <TypewriterEffect words={words} />
@@ -41,7 +41,7 @@ export default function TypewriterEffectDemo() {
                 </button>
             </div> */}
 
-            {/* <TypewriterDemo /> */}
-        </div>
-    );
+      {/* <TypewriterDemo /> */}
+    </div>
+  );
 }

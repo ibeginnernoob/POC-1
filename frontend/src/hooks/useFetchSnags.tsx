@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import type { SnagDetails } from '@/types/snag';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import type { SnagDetails } from "@/types/snag";
 
 type ResBody = {
   msg: string;
@@ -18,26 +18,29 @@ const useFetchAllSnags = () => {
       setError(null);
 
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
 
         if (!token) {
-          throw new Error('No auth token found.');
+          throw new Error("No auth token found.");
         }
 
-        const res = await axios.get<ResBody>(`${import.meta.env.VITE_BACKEND_URL}/snag/fetch-sidebar`, {
-          headers: {
-            Authorization: token,
+        const res = await axios.get<ResBody>(
+          `${import.meta.env.VITE_BACKEND_URL}/snag/fetch-sidebar`,
+          {
+            headers: {
+              Authorization: token,
+            },
           },
-        });
+        );
 
         if (res.status !== 200 || !res.data.snags) {
-          throw new Error(res.data.msg || 'Unexpected error');
+          throw new Error(res.data.msg || "Unexpected error");
         }
 
         setSnags(res.data.snags);
       } catch (err: any) {
-        console.error('Failed to fetch snags:', err.message);
-        setError(err.message || 'Something went wrong');
+        console.error("Failed to fetch snags:", err.message);
+        setError(err.message || "Something went wrong");
         setSnags([]);
       } finally {
         setIsLoading(false);
@@ -55,4 +58,3 @@ const useFetchAllSnags = () => {
 };
 
 export default useFetchAllSnags;
-

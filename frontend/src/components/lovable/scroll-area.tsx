@@ -12,8 +12,8 @@ const ScrollArea = React.forwardRef<
     className={cn("relative", className)}
     {...props}
   >
-<ScrollAreaPrimitive.Viewport className="h-full w-full overflow-x-auto">
-{children}
+    <ScrollAreaPrimitive.Viewport className="h-full w-full overflow-x-auto">
+      {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar />
     <ScrollAreaPrimitive.Corner />

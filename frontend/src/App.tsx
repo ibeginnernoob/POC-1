@@ -7,7 +7,7 @@ import Landing from "./pages/Landing";
 import Snag from "./pages/snag";
 import Analytics from "./pages/analytics";
 import Test from "./pages/test";
-import '@/index.css'
+import "@/index.css";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/analytics" element={<Analytics />} />
-	  <Route path="/test" element={<Test />} />
+      <Route path="/test" element={<Test />} />
     </Routes>
   );
 }
