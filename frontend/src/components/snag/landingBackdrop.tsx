@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import { Box, HoverCard, Link, Portal, Strong } from '@chakra-ui/react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, User } from 'lucide-react';
 import { InteractiveHoverButton } from '../magicui/interactive-hover-button';
 import FeatureCard from './featureCard';
+import { useNavigate } from 'react-router-dom';
 
 export default function LandingBackdrop({
     children,
+    isAuth,
 }: {
     children?: React.ReactNode;
+    isAuth: boolean;
 }) {
+    const navigate = useNavigate();
+
     const [open, setOpen] = useState(false);
 
     return (
@@ -150,9 +155,18 @@ export default function LandingBackdrop({
                             Docs
                         </button>
                     </div>
-                    <InteractiveHoverButton className="border-[0.5px] border-solid border-gray-300 hover:border-none">
-                        Sign In
-                    </InteractiveHoverButton>
+                    {!isAuth ? (
+                        <InteractiveHoverButton
+                            onClick={() => navigate('/login')}
+                            className="border-[0.5px] border-solid border-gray-300 hover:border-none"
+                        >
+                            Sign In
+                        </InteractiveHoverButton>
+                    ) : (
+                        <div className="p-3 bg-blue-100 rounded-full flex items-center justify-center">
+                            <User size={20} />
+                        </div>
+                    )}
                 </div>
             </div>
 

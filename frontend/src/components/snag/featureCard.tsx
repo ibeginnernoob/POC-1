@@ -1,6 +1,9 @@
 import { Shield, ScanEye, Speech } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function FeatureCard() {
+    const navigate = useNavigate();
+
     return (
         <div className="flex-1 flex flex-row px-10 py-6 gap-40">
             <div className="bg-white flex flex-col gap-6 max-w-xl">
@@ -8,7 +11,10 @@ export default function FeatureCard() {
                     <h3 className="font-polysans text-lg text-gray-600 font-[400]">
                         Content AI Features
                     </h3>
-                    <div className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100">
+                    <a
+                        onClick={() => navigate('/snag/new')}
+                        className="flex flex-row gap-3 max-w-md px-3 py-2 rounded-xl hover:cursor-pointer hover:bg-gray-100"
+                    >
                         <div className="pt-1.5">
                             <Shield
                                 size={22}
@@ -17,7 +23,7 @@ export default function FeatureCard() {
                             />
                         </div>
                         <div className="flex flex-col gap-1">
-                            <div className=" flex flex-row items-center gap-3">
+                            <div className="flex flex-row items-center gap-3">
                                 <p className="font-polysans font-bold text-lg/5 p-0 m-0">
                                     AI Snag Analyzer
                                 </p>
@@ -32,11 +38,11 @@ export default function FeatureCard() {
                                 system
                             </p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <h3 className="font-polysans text-lg text-gray-600 font-[400]">
+                    <h3 className="font-polysans text-lg text-gray-600 hover:cursor-pointer font-[400]">
                         OpenCV Features
                     </h3>
                     <div className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100">
@@ -67,7 +73,7 @@ export default function FeatureCard() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <h3 className="font-polysans text-lg text-gray-600 font-[400]">
+                    <h3 className="font-polysans text-lg text-gray-600 hover:cursor-pointer font-[400]">
                         AI Speech Features
                     </h3>
                     <div className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100">
@@ -112,7 +118,10 @@ export default function FeatureCard() {
                         <h2 className="text-2xl font-bold text-white font-polysans">
                             SnaGenie
                         </h2>
-                        <button className="w-fit px-4 py-2 bg-white rounded-lg font-medium text-black font-roboto text-base hover:rounded-xl hover:bg-gray-100 duration-300 shadow-lg">
+                        <button
+                            onClick={() => navigate('/snag/new')}
+                            className="w-fit px-4 py-2 bg-white rounded-lg font-medium text-black font-roboto text-base hover:rounded-xl hover:bg-gray-100 duration-300 shadow-lg"
+                        >
                             Go to Docs →
                         </button>
                     </div>

@@ -1,199 +1,153 @@
-import { useState, useEffect } from "react";
-import { Button } from "../components/lovable/button";
-import { Input } from "../components/lovable/input";
-import { Label } from "../components/lovable/label";
-import { Eye, EyeOff } from "lucide-react";
-import axios from "axios";
-import useIsAuth from "@/hooks/useIsAuth";
-import { useNavigate } from "react-router-dom";
-import Loader from "@/components/ui/loader";
+import { useState, useEffect } from 'react';
+import { User, Lock } from 'lucide-react';
+import axios from 'axios';
+import useIsAuth from '@/hooks/useIsAuth';
+import { useNavigate } from 'react-router-dom';
+import Loader from '@/components/ui/loader';
 
 type ResBody = {
-  msg: string;
-  token?: string;
+    msg: string;
+    token?: string;
 };
 
 const LoginPage = () => {
-  const navigation = useNavigate();
-  const { isLoading: isLoadingIsAuth, isAuth } = useIsAuth();
+    const navigation = useNavigate();
+    const { isLoading: isLoadingIsAuth, isAuth } = useIsAuth();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    pbNumber: "",
-    password: "",
-  });
-  const [isLoading, setIsLoadingResult] = useState(false);
+    // const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        pbNumber: '',
+        password: '',
+    });
+    const [isLoading, setIsLoadingResult] = useState(false);
 
-  useEffect(() => {
-    if (isAuth) {
-      navigation("/");
+    useEffect(() => {
+        if (isAuth) {
+            navigation('/');
+        }
+    }, [isAuth, isLoadingIsAuth]);
+
+    const handleInputChange = (field: string, value: string) => {
+        setFormData((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!formData.pbNumber || !formData.password) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        try {
+            setIsLoadingResult(true);
+            const res = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/auth/signin`,
+                {
+                    pb_number: formData?.pbNumber || '',
+                    password: formData.password || '',
+                }
+            );
+
+            const resBody = res.data as ResBody;
+
+            if (res.status !== 200) {
+                throw new Error(resBody.msg);
+            }
+
+            if (res.status === 200) {
+                localStorage.setItem('token', 'Bearer ' + resBody.token);
+                console.log(resBody.msg);
+            }
+
+            navigation('/');
+        } catch (e: any) {
+            console.log(e);
+            alert(e.message);
+        } finally {
+            setIsLoadingResult(true);
+        }
+    };
+
+    if (isLoadingIsAuth || isLoading) {
+        return (
+            <div className="h-screen w-screen bg-white">
+                <Loader />
+            </div>
+        );
     }
-  }, [isAuth, isLoadingIsAuth]);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.pbNumber || !formData.password) {
-      alert("Please fill in all fields");
-      return;
-    }
-
-    try {
-      setIsLoadingResult(true);
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/signin`,
-        {
-          pb_number: formData?.pbNumber || "",
-          password: formData.password || "",
-        },
-      );
-
-      const resBody = res.data as ResBody;
-
-      if (res.status !== 200) {
-        throw new Error(resBody.msg);
-      }
-
-      if (res.status === 200) {
-        localStorage.setItem("token", "Bearer " + resBody.token);
-        console.log(resBody.msg);
-      }
-
-      navigation("/");
-    } catch (e: any) {
-      console.log(e);
-      alert(e.message);
-    } finally {
-      setIsLoadingResult(true);
-    }
-  };
-
-  if (isLoadingIsAuth || isLoading) {
     return (
-      <div className="h-screen w-screen bg-white">
-        <Loader />
-      </div>
-    );
-  }
-
-  return (
-    <div className="h-screen flex flex-row w-screen overflow-y-auto">
-      <div className="h-screen hidden flex-col flex-1 md:flex">
-        <img
-          src={"../../../public/imgs/hma.jpeg"}
-          alt="Technology background"
-          className="flex-1"
-        />
-        <img
-          src={"../../../public/imgs/iiit.jpeg"}
-          alt="Technology background"
-          className="flex-1"
-        />
-      </div>
-
-      {/* form */}
-      <div className="flex-1 flex flex-col gap-10 mt-10">
-        {/* logo */}
-        <div className="px-10">
-          <div className="flex flex-row items-center">
-            <img
-              src={"../../../public/imgs/hal-logo.png"}
-              alt="HAL Logo"
-              className="h-12 sm:h-16 w-auto"
-            />
-            <img
-              src={"../../../public/imgs/iiit-logo.png"}
-              alt="IIIT DWD Logo"
-              className="h-16 sm:h-20 w-auto"
-            />
-          </div>
-          <p className="font-bold">{"CENTER OF EXCELLENCE FOR AI"}</p>
-        </div>
-
-        {/* form */}
-        <div className="mx-10 mt-10 border-[0.5px] border-solid border-gray-400 p-6 rounded-md flex flex-col gap-6 md:gap-8">
-          <div className="">
-            <h1 className="text-3xl font-bold text-foreground md:text-4xl">
-              Sign In
-            </h1>
-          </div>
-          <div className="flex-col items-center justify-center">
-            <form onSubmit={handleLogin} className="space-y-9">
-              <div className="space-y-2">
-                <Label
-                  htmlFor="pbnumber"
-                  className="text-sm font-medium text-muted-foreground md:text-base"
-                >
-                  PB Number
-                </Label>
-                <Input
-                  id="pbNumber"
-                  placeholder="Enter your PB number"
-                  value={formData.pbNumber}
-                  onChange={(e) =>
-                    handleInputChange("pbNumber", e.target.value)
-                  }
-                  className="h-12 bg-background border-input rounded-lg px-4 text-sm text-foreground placeholder:text-muted-foreground md:text-base"
+        <div className="h-screen w-screen bg-[url(../../public/imgs/auth-bg.png)] bg-cover bg-center bg-no-repeat flex flex-col bg-white overflow-y-hidden">
+            <div className="w-full flex flex-row items-start justify-between py-6 px-28">
+                <img
+                    src="../../public/imgs/hal-big-logo.svg.png"
+                    alt="HAL"
+                    className="h-20"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="password"
-                  className="text-base font-medium text-muted-foreground"
-                >
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
-                    className="h-12 pr-14"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 p-0 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </Button>
+                <h1 className="text-4xl text-white font-roboto font-bold mr-6">
+                    Center of Excellence for AI
+                </h1>
+                <img
+                    src="../../public/imgs/iiit-logo-white.png"
+                    alt="HAL"
+                    className="h-28"
+                />
+            </div>
+            <div className="flex-1 flex flex-row justify-between items-center gap-20 pl-20 pr-28 pb-10">
+                <div className="flex-1 h-full bg-[url(../../public/imgs/auth-left.png)] bg-cover bg-center bg-no-repeat bg-green-200 rounded-3xl" />
+                <div className="flex-1">
+                    <div className="h-full flex flex-col rounded-xl">
+                        <h2 className="text-5xl text-white font-bold font-polysans mb-20">
+                            Welcome Back!
+                        </h2>
+                        <div className="w-full flex flex-col gap-10">
+                            <div className="relative w-full">
+                                <div className="z-10 absolute left-0 -top-2 -bottom-2 bg-white px-6 rounded-full flex items-center justify-center">
+                                    <User color="black" size={36} />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="PB Number"
+                                    className="flex-1 w-full pl-24 pr-6 py-5 bg-[#476569]/70 text-white caret-white font-roboto font-medium text-xl rounded-full focus:outline-none backdrop-blur-lg"
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'pbNumber',
+                                            e.target.value
+                                        )
+                                    }
+                                    value={formData.pbNumber}
+                                />
+                            </div>
+                            <div className="relative w-full">
+                                <div className="z-10 absolute right-0 -top-2 -bottom-2 bg-white px-6 rounded-full flex items-center justify-center">
+                                    <Lock color="black" size={36} />
+                                </div>
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    className="flex-1 w-full pl-6 pr-24 py-5 bg-[#476569]/70 text-white caret-white font-roboto font-medium text-xl rounded-full focus:outline-none backdrop-blur-lg"
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'password',
+                                            e.target.value
+                                        )
+                                    }
+                                    value={formData.password}
+                                />
+                            </div>
+                        </div>
+                        <button
+                            className="mt-32 mx-4 bg-white text-black text-2xl font-polysans font-bold py-4 rounded-full hover:bg-gray-300 transition-colors duration-300"
+                            onClick={handleLogin}
+                        >
+                            Login
+                        </button>
+                    </div>
                 </div>
-              </div>
-              <div className="text-center mt-4">
-                <p className="text-sm text-muted-foreground md:text-base">
-                  Don't have an account?{" "}
-                  <a href="/signup" className="text-blue-600 hover:underline">
-                    Sign Up
-                  </a>
-                </p>
-              </div>
-              <Button
-                type="submit"
-                className="min-w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-lg mt-8 shadow"
-              >
-                Sign In
-              </Button>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default LoginPage;

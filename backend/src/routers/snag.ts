@@ -5,6 +5,12 @@ import Busboy from 'busboy';
 
 const router = Router();
 
+const ALLOWED_MIME_TYPES = new Set([
+    'text/csv',
+    'application/vnd.ms-excel', // many browsers use this for .csv or .xls
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+]);
+
 type GeneratedData = {
     filename?: string;
     userId?: string; // add this to store in DB once the ML response arrives
@@ -55,8 +61,8 @@ router.get('/fetch-sidebar', async (req, res, next) => {
         const userId = req.userId;
 
         const snags = await Snag.find({ userId })
-            .select('_id query timestamp')
-            .sort({ createdAt: -1 });
+            .select('_id query timestamp created_at')
+            .sort({ created_at: -1 });
 
         if (!snags) {
             res.status(404).json({
@@ -221,14 +227,23 @@ router.post('/upload-file', async (req, res, next) => {
                         body: formData,
                     }
                 );
-            } catch (e: any) {
-                console.log(e);
-                res.status(500).json({
-                    msg: 'Data could not generated',
+
+                if (!response.ok || response.status !== 200) {
+                    return res
+                        .status(500)
+                        .json({ msg: 'Failed to upload file' });
+                }
+
+                res.status(200).json({
+                    msg: 'File uploaded successfully',
                 });
+            } catch (error) {
+                res.status(500).json({ msg: 'Failed to forward file' });
             }
         });
     });
+
+    req.pipe(busboy);
 });
 
 type AnalysisData = {
@@ -307,60 +322,6 @@ router.post('/analyse', async (req, res) => {
             details: (error as any).message,
         });
     }
-});
-
-router.post('/upload-file', async (req, res, next) => {
-    if (!req.userId) {
-        res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const busboy = Busboy({ headers: req.headers });
-
-    busboy.on('file', async (fieldname, file, info) => {
-        const { filename, encoding, mimeType } = info;
-        const chunks: Buffer[] = [];
-
-        file.on('data', (chunk) => {
-            chunks.push(chunk);
-        });
-
-        file.on('end', async () => {
-            const buffer = Buffer.concat(chunks);
-            const formData = new FormData();
-            const blob = new Blob([buffer], { type: mimeType });
-
-            if (!blob) {
-                return res.status(400).json({ error: 'Invalid file data' });
-            }
-
-            formData.append('file', blob, filename);
-            formData.append('pb_number', `${req.pb_number}`);
-
-            try {
-                const response = await fetch(
-                    `${process.env.FAST_API_URL}/store_file`,
-                    {
-                        method: 'POST',
-                        body: formData,
-                    }
-                );
-
-                if (!response.ok || response.status !== 200) {
-                    return res
-                        .status(500)
-                        .json({ msg: 'Failed to upload file' });
-                }
-
-                res.status(200).json({
-                    msg: 'File uploaded successfully',
-                });
-            } catch (error) {
-                res.status(500).json({ msg: 'Failed to forward file' });
-            }
-        });
-    });
-
-    req.pipe(busboy);
 });
 
 router.post('/fetch-cols', async (req, res, next) => {

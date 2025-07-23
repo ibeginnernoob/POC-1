@@ -20,4 +20,5 @@ export type SnagDetails = {
     recommendation_reliability: string;
   };
   graphs: any;
+  created_at: Date;
 };

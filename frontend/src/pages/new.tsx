@@ -7,11 +7,39 @@ import DetailsDialog from '@/components/snag/detailsDialog';
 import Fade from '@mui/material/Fade';
 import Sidebar from '@/components/snag/sidebar';
 import Loader from '@/components/ui/loader';
+import { MultiStepLoader } from '@/components/adheils-cumponents/multi-step-loader';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import useIsAuth from '@/hooks/useIsAuth';
 import UploadFileModal from '@/components/snag/uploadFileModal';
 import useFiles from '@/hooks/useFiles';
+
+const loadingStates = [
+    {
+        text: 'Buying a condo',
+    },
+    {
+        text: 'Travelling in a flight',
+    },
+    {
+        text: 'Meeting Tyler Durden',
+    },
+    {
+        text: 'He makes soap',
+    },
+    {
+        text: 'We goto a bar',
+    },
+    {
+        text: 'Start a fight',
+    },
+    {
+        text: 'We like it',
+    },
+    {
+        text: 'Welcome to F**** C***',
+    },
+];
 
 type Response = {
     snagId?: string;
@@ -91,6 +119,8 @@ export default function NewChat() {
             const formData = new FormData();
             formData.append('file', uploadFile);
 
+            console.log('ready for file upload');
+
             const token = localStorage.getItem('token');
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/snag/upload-file`,
@@ -102,9 +132,11 @@ export default function NewChat() {
                 }
             );
 
-            if (res.status !== 200) {
+            if (!res || res.status !== 200) {
                 throw new Error(res.data.msg);
             }
+
+            console.log('file uploaded successfully');
 
             navigate(0);
             handleUploadClose();
@@ -147,10 +179,10 @@ export default function NewChat() {
 
             const properties = Object.entries(dialogValues)
                 .filter(([_, value]) => value !== null && value !== undefined)
-                .map(([key, value]) => `${key}: ${value}`)
+                .map(([key, value]) => `${key}: ${value}\n`)
                 .join(', ');
 
-            let prompt = `snag: ${query} \n ${properties}`;
+            let prompt = `Snag: ${query}\n${properties}`;
 
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/snag/rectify`,
@@ -182,13 +214,12 @@ export default function NewChat() {
 
     return (
         <div className="w-screen h-screen flex flex-col">
-            <Modal
-                open={isLoading || isLoadingAuthStatus || isLoadingOptionFiles}
-                onClose={() => setIsLoading(false)}
-                disableEscapeKeyDown={true}
-            >
-                <Loader />
-            </Modal>
+            <MultiStepLoader
+                loadingStates={loadingStates}
+                loading={isLoading}
+                duration={30000}
+                loop={false}
+            />
             <Modal open={dialogOpen} onClose={handleDetailsDialogClose}>
                 <Box sx={style}>
                     <DetailsDialog
@@ -206,7 +237,7 @@ export default function NewChat() {
                     </Box>
                 </Fade>
             </Modal>
-            {/* <Modal
+            <Modal
                 open={uploadOpen}
                 onClose={handleUploadClose}
                 disableEscapeKeyDown={true}
@@ -221,7 +252,7 @@ export default function NewChat() {
                         />
                     </Box>
                 </Fade>
-            </Modal> */}
+            </Modal>
             <Header
                 handleSidebarOpen={handleSidebarOpen}
                 handleFileSelect={handleUploadFileSelect}
@@ -240,6 +271,7 @@ export default function NewChat() {
                     files={optionFiles}
                     selectedFile={selectedFiles}
                     handleSelectFile={handleFileOptionSelect}
+                    dialogValues={dialogValues}
                 />
             </div>
         </div>
@@ -251,14 +283,10 @@ const style: SxProps<Theme> | undefined = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    bgcolor: 'background.paper',
-    boxShadow: 10,
-    borderRadius: 8,
+    outline: 'none',
 };
 
 const sidebarStyles: SxProps<Theme> | undefined = {
     position: 'absolute',
     left: 0,
-    bgcolor: 'background.paper',
-    boxShadow: 10,
 };

@@ -5,6 +5,11 @@ const snagSchema = new Schema({
         type: String,
         required: true,
     },
+    created_at: {
+        type: Date,
+        required: true,
+        default: Date.now,
+    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',

@@ -40,6 +40,7 @@ export default function Input({
     files,
     selectedFile,
     handleSelectFile,
+    dialogValues,
 }: {
     handleModalOpen: () => void;
     fetchDetails: () => Promise<void>;
@@ -48,31 +49,14 @@ export default function Input({
     files: string[];
     selectedFile: string[];
     handleSelectFile: (e: any) => void;
+    dialogValues: any;
 }) {
     const [openFileChooser, setOpenFileChooser] = useState<boolean>(true);
 
-    // const validCount = useMemo(() => {
-    //     let count = 0;
-    //     if (inputValues.type) {
-    //         count += 1;
-    //     }
-    //     if (inputValues.event) {
-    //         count += 1;
-    //     }
-    //     if (inputValues.raised_by) {
-    //         count += 1;
-    //     }
-    //     if (inputValues.checked && inputValues.checked === true) {
-    //         count += 1;
-    //     }
-    //     return count;
-    // }, [
-    //     inputValues.event,
-    //     inputValues.type,
-    //     inputValues.raised_by,
-    //     inputValues.hours,
-    //     inputValues.checked,
-    // ]);
+    const filledCount = useMemo(() => {
+        return Object.values(dialogValues).filter((v) => v !== null && v !== '')
+            .length;
+    }, [dialogValues]);
 
     const isDisabled: boolean = useMemo(() => {
         if (query.length === 0) {
@@ -85,11 +69,14 @@ export default function Input({
         <div className="w-[100%] py-3 gap-3 flex flex-col items-center">
             <div className="w-[100%] flex flex-col justify-center items-center gap-1">
                 <div className="max-w-3xl w-full flex flex-row items-center gap-4 mb-1">
-                    <div className="border border-solid border-blue-600 rounded-md px-3 py-1 text-black font-roboto">
-                        File: Default
-                    </div>
                     <div className="border border-solid border-blue-600 rounded-md px-3 py-1 text-black font-roboto line-clamp-1">
-                        Details Configured: 0
+                        File:{' '}
+                        {selectedFile && selectedFile.length > 0
+                            ? selectedFile
+                            : 'default'}
+                    </div>
+                    <div className="border border-solid border-blue-600 rounded-md px-3 py-1 text-black font-roboto flex-shrink-0">
+                        Details Configured: {filledCount}
                     </div>
                 </div>
                 <div className="max-w-3xl flex-1 flex flex-col gap-2 justify-center items-start px-2 border-[0.5px] border-solid border-gray-600 w-[100%] rounded-xl pb-2">

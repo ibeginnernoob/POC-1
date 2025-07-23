@@ -29,11 +29,9 @@ const Landing = () => {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            {/* Header */}
-            {/* <Navbar isAuth={isAuth} /> */}
             <div className="h-screen">
                 <AnimatedBanner />
-                <LandingBackdrop>
+                <LandingBackdrop isAuth={isAuth}>
                     <section className="container mx-auto">
                         <div className="text-center mb-16 flex flex-col justify-center items-center">
                             <h1 className="text-8xl font-black text-gray-900 mb-6 max-w-5xl">
@@ -57,7 +55,10 @@ const Landing = () => {
                                 <button className="px-6 py-3 text-2xl italic text-black font-polysans bg-white border-[2px] border-solid border-black rounded-full hover:bg-gray-200 duration-200">
                                     Read the Docs →
                                 </button>
-                                <button className="px-6 py-3 text-2xl italic text-black font-polysans bg-white border-[2px] border-solid border-black rounded-full hover:bg-gray-200 duration-200">
+                                <button
+                                    className="px-6 py-3 text-2xl italic text-black font-polysans bg-white border-[2px] border-solid border-black rounded-full hover:bg-gray-200 duration-200"
+                                    onClick={() => navigator('/snag/new')}
+                                >
                                     Try it Live
                                 </button>
                             </div>
@@ -84,7 +85,7 @@ const Landing = () => {
 
 export function AnimatedBanner() {
     return (
-        <a href="">
+        <a href="/snag/new">
             <motion.div
                 className="w-full py-3 text-center text-white font-medium"
                 animate={{
