@@ -5,8 +5,8 @@ import SignupPage from './pages/Signup';
 import NotFound from './pages/NotFound';
 import Landing from './pages/Landing';
 import Snag from './pages/snag';
-import Analytics from './pages/analytics';
-import Test from './pages/test';
+import OpenCV from './pages/openCV';
+import DocsPage from './pages/docs';
 import '@/index.css';
 
 function App() {
@@ -15,8 +15,10 @@ function App() {
             <Route path="/landing" element={<Landing />} />
             <Route path="/snag/new" element={<NewChat />} />
             <Route path="/snag/:snagId" element={<Snag />} />
+            <Route path="/opencv" element={<OpenCV />} />
             <Route path="/" element={<LoginPage />} />
-            {/* <Route path="/signup" element={<SignupPage />} /> */}
+			<Route path="/docs" element={<DocsPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             {/* <Route path="/test" element={<Test />} /> */}
             <Route path="*" element={<NotFound />} />
         </Routes>
