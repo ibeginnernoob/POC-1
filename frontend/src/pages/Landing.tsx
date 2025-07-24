@@ -32,7 +32,7 @@ const Landing = () => {
             <div className="h-screen">
                 <AnimatedBanner />
                 <LandingBackdrop isAuth={isAuth}>
-                    <section className="container mx-auto">
+                    <section className="container mx-auto -mt-8">
                         <div className="text-center mb-16 flex flex-col justify-center items-center">
                             <h1 className="text-8xl font-black text-gray-900 mb-6 max-w-5xl">
                                 Aircraft Management
@@ -52,7 +52,10 @@ const Landing = () => {
                                 </p>
                             </div>
                             <div className="flex flex-row mt-28 gap-20">
-                                <button className="px-6 py-3 text-2xl italic text-black font-polysans bg-white border-[2px] border-solid border-black rounded-full hover:bg-gray-200 duration-200">
+                                <button
+                                    onClick={() => navigator('/docs')}
+                                    className="px-6 py-3 text-2xl italic text-black font-polysans bg-white border-[2px] border-solid border-black rounded-full hover:bg-gray-200 duration-200"
+                                >
                                     Read the Docs →
                                 </button>
                                 <button

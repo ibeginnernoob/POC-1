@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+
+// Type definitions
+interface Project {
+    id: 'visioncheck' | 'cockpit' | 'snag';
+    title: string;
+    subtitle: string;
+}
+
+interface SectionProps {
+    title: string;
+    children: React.ReactNode;
+    className?: string;
+}
 
 interface CodeBlockProps {
     children: React.ReactNode;
     language?: string;
 }
 
-interface FeatureCardProps {
-    icon: React.ReactNode;
+type InfoCardType = 'default' | 'warning' | 'success' | 'info';
+interface InfoCardProps {
     title: string;
     description: string;
+    type?: InfoCardType;
 }
 
 interface TableProps {
@@ -16,104 +32,151 @@ interface TableProps {
     rows: (string | React.ReactNode)[][];
 }
 
-interface Section {
-    id: string;
+interface Feature {
     title: string;
-    icon: string;
+    description: string;
 }
 
-const DocsPage = () => {
-    const [activeSection, setActiveSection] = useState('overview');
+interface FeatureGridProps {
+    features: Feature[];
+}
 
-        const sections: Section[] = [
-        { id: 'overview', title: 'Overview', icon: '📌' },
-        { id: 'how-it-works', title: 'How It Works', icon: '🧠' },
-        { id: 'workflow', title: 'Step-by-Step Flow', icon: '🔁' },
-        { id: 'inputs-outputs', title: 'Inputs & Outputs', icon: '🧪' },
-        { id: 'tech-stack', title: 'Tech Stack', icon: '🧰' },
-        { id: 'setup', title: 'Setup Instructions', icon: '🛠' },
-        { id: 'usage', title: 'How to Use', icon: '🚀' },
-        { id: 'examples', title: 'Example Applications', icon: '📊' },
-        { id: 'limitations', title: 'Limitations', icon: '📍' },
-        { id: 'improvements', title: 'Future Improvements', icon: '🔄' },
+interface Step {
+    title: string;
+    description: string;
+}
+
+interface StepListProps {
+    steps: Step[];
+}
+
+const DocumentationPage = ({
+    active,
+}: {
+    active?: 'visioncheck' | 'cockpit' | 'snag';
+}) => {
+    const { docId } = useParams<{ docId: string }>();
+
+    const [activeProject, setActiveProject] = useState<
+        'visioncheck' | 'cockpit' | 'snag'
+    >(active || 'visioncheck');
+
+    useEffect(() => {
+        if (
+            docId &&
+            (docId === 'visioncheck' || docId === 'cockpit' || docId === 'snag')
+        ) {
+            setActiveProject(docId);
+        } else {
+            setActiveProject('visioncheck');
+        }
+    }, [docId]);
+
+    const projects: Project[] = [
+        {
+            id: 'visioncheck',
+            title: 'VisionCheck',
+            subtitle: 'Computer Vision Measurement Tool',
+        },
+        {
+            id: 'cockpit',
+            title: 'Cockpit Voice Command System',
+            subtitle: 'Real-time Voice Recognition',
+        },
     ];
 
-    const NavigationSidebar = () => (
-        <nav className="fixed left-0 top-0 h-screen w-64 bg-slate-50 border-r border-slate-200 overflow-y-auto z-40">
-            <div className="p-6">
-                <h1 className="text-2xl font-bold text-slate-900 mb-8">
-                    VisionCheck
-                </h1>
-                <ul className="space-y-2">
-                    {sections.map((section) => (
-                        <li key={section.id}>
-                            <button
-                                onClick={() => setActiveSection(section.id)}
-                                className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-3 ${
-                                    activeSection === section.id
-                                        ? 'bg-primary-500 text-white'
-                                        : 'text-slate-700 hover:bg-slate-100'
-                                }`}
-                            >
-                                <span className="text-lg">{section.icon}</span>
-                                {section.title}
-                            </button>
-                        </li>
+    const ProjectSelector: React.FC = () => (
+        <div className="border-b border-primary-200 bg-white sticky top-0 z-10">
+            <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="flex space-x-1">
+                    {projects.map((project) => (
+                        <button
+                            key={project.id}
+                            onClick={() => setActiveProject(project.id)}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                                activeProject === project.id
+                                    ? 'bg-accent-500 text-blue-400'
+                                    : 'text-blue-800 hover:bg-primary-100'
+                            }`}
+                        >
+                            {project.title}
+                        </button>
                     ))}
-                </ul>
+                </div>
             </div>
-        </nav>
+        </div>
     );
 
-        const CodeBlock = ({ children, language = 'bash' }: CodeBlockProps) => (
-        <div className="bg-slate-900 rounded-lg p-4 my-4 overflow-x-auto">
-            <pre className="text-sm text-slate-100">
-                <code>{children}</code>
+    const Section: React.FC<SectionProps> = ({
+        title,
+        children,
+        className = '',
+    }) => (
+        <section className={`mb-12 ${className}`}>
+            <h2 className="text-2xl font-semibold text-primary-900 mb-6 pb-3 border-b border-primary-200">
+                {title}
+            </h2>
+            {children}
+        </section>
+    );
+
+    const CodeBlock: React.FC<CodeBlockProps> = ({
+        children,
+        language = 'bash',
+    }) => (
+        <div className="bg-primary-900 rounded-lg p-4 my-4 overflow-x-auto border">
+            <pre className="text-sm text-primary-100">
+                <code className={`language-${language}`}>{children}</code>
             </pre>
         </div>
     );
 
-    const FeatureCard = ({
-        icon,
+    const InfoCard: React.FC<InfoCardProps> = ({
         title,
         description,
-    }: FeatureCardProps) => (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="text-2xl mb-3">{icon}</div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                {title}
-            </h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-                {description}
-            </p>
-        </div>
-    );
+        type = 'default',
+    }) => {
+        const baseClasses = 'p-4 rounded-lg border-l-4 my-4';
+        const typeClasses = {
+            default: 'bg-primary-50 border-primary-500 text-primary-800',
+            warning: 'bg-yellow-50 border-yellow-500 text-yellow-800',
+            success: 'bg-green-50 border-green-500 text-green-800',
+            info: 'bg-blue-50 border-blue-500 text-blue-800',
+        };
 
-        const Table = ({ headers, rows }: TableProps) => (
-        <div className="overflow-x-auto my-6">
-            <table className="w-full border-collapse bg-white rounded-lg shadow-sm">
-                <thead>
-                    <tr className="bg-slate-50">
+        return (
+            <div className={`${baseClasses} ${typeClasses[type]}`}>
+                <h4 className="font-semibold mb-2">{title}</h4>
+                <p className="text-sm leading-relaxed">{description}</p>
+            </div>
+        );
+    };
+
+    const Table: React.FC<TableProps> = ({ headers, rows }) => (
+        <div className="overflow-x-auto my-6 border border-primary-200 rounded-lg">
+            <table className="w-full">
+                <thead className="bg-primary-50">
+                    <tr>
                         {headers.map((header, index) => (
                             <th
                                 key={index}
-                                className="px-6 py-3 text-left text-sm font-semibold text-slate-900 border-b border-slate-200"
+                                className="px-6 py-3 text-left text-sm font-semibold text-primary-900 border-b border-primary-200"
                             >
                                 {header}
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white">
                     {rows.map((row, rowIndex) => (
                         <tr
                             key={rowIndex}
-                            className="border-b border-slate-100 hover:bg-slate-50"
+                            className="border-b border-primary-100 hover:bg-primary-50 transition-colors"
                         >
                             {row.map((cell, cellIndex) => (
                                 <td
                                     key={cellIndex}
-                                    className="px-6 py-4 text-sm text-slate-700"
+                                    className="px-6 py-4 text-sm text-primary-700"
                                 >
                                     {cell}
                                 </td>
@@ -125,467 +188,610 @@ const DocsPage = () => {
         </div>
     );
 
-    const renderContent = () => {
-        switch (activeSection) {
-            case 'overview':
-                return (
-                    <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">📌</span>
-                            Overview
-                        </h2>
-                        <div className="prose prose-slate max-w-none">
-                            <p className="text-lg text-slate-700 mb-6 leading-relaxed">
-                                VisionCheck is a **computer vision tool** built
-                                using Python and OpenCV, designed to detect and
-                                measure the dimensions of real-world objects in
-                                real time using a reference ArUco marker for
-                                scale calibration.
-                            </p>
-                            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-6 rounded-r-lg">
-                                <p className="text-blue-800">
-                                    <strong>Key Features:</strong> Real-time
-                                    video capture, shape classification, size
-                                    computation, and result exporting with a
-                                    user-friendly GUI built in tkinter.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                );
+    const FeatureGrid: React.FC<FeatureGridProps> = ({ features }) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+            {features.map((feature, index) => (
+                <div
+                    key={index}
+                    className="bg-white p-4 rounded-lg border border-primary-200 hover:shadow-sm transition-shadow"
+                >
+                    <h4 className="font-medium text-primary-900 mb-2">
+                        {feature.title}
+                    </h4>
+                    <p className="text-sm text-primary-600">
+                        {feature.description}
+                    </p>
+                </div>
+            ))}
+        </div>
+    );
 
-            case 'how-it-works':
-                return (
-                    <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🧠</span>
-                            How It Works
-                        </h2>
-                        <div className="prose prose-slate max-w-none">
-                            <p className="text-lg text-slate-700 mb-6 leading-relaxed">
-                                The tool leverages **ArUco markers** to
-                                calibrate real-world scale and uses
-                                contour-based shape detection to identify
-                                objects in the camera feed or static images.
-                            </p>
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-6 my-6">
-                                <h3 className="text-lg font-semibold text-green-800 mb-3">
-                                    Core Principle
-                                </h3>
-                                <p className="text-green-700">
-                                    By knowing the real-world size of the ArUco
-                                    marker, we can calculate the **pixel-to-cm
-                                    ratio** and use it to compute the size of
-                                    other detected objects.
-                                </p>
-                            </div>
-                        </div>
+    const StepList: React.FC<StepListProps> = ({ steps }) => (
+        <div className="space-y-4 my-6">
+            {steps.map((step, index) => (
+                <div
+                    key={index}
+                    className="flex gap-4 p-4 bg-white rounded-lg border border-primary-200"
+                >
+                    <div className="flex-shrink-0 w-8 h-8 bg-accent-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                        {index + 1}
                     </div>
-                );
-
-            case 'workflow':
-                return (
                     <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🔁</span>
-                            Step-by-Step Flow
-                        </h2>
-                        <div className="space-y-6">
-                            {[
-                                {
-                                    step: 1,
-                                    title: 'Load Camera / Image',
-                                    desc: 'Live webcam feed or a static image can be selected for processing.',
-                                },
-                                {
-                                    step: 2,
-                                    title: 'Detect ArUco Marker',
-                                    desc: 'The tool detects the ArUco marker in the frame and calculates the scale.',
-                                },
-                                {
-                                    step: 3,
-                                    title: 'Find Contours / Shapes',
-                                    desc: "Objects are detected using OpenCV's contour detection methods.",
-                                },
-                                {
-                                    step: 4,
-                                    title: 'Classify Shapes',
-                                    desc: 'Shapes such as rectangles, squares, circles, ellipses, and triangles are identified based on geometric properties.',
-                                },
-                                {
-                                    step: 5,
-                                    title: 'Compute Measurements',
-                                    desc: 'Dimensions (width, height, perimeter, area) are calculated using the scale from the ArUco marker.',
-                                },
-                                {
-                                    step: 6,
-                                    title: 'Display & Export',
-                                    desc: 'Detected shapes and measurements are overlaid on the image. Users can export results to CSV or JSON.',
-                                },
-                            ].map((item) => (
-                                <div
-                                    key={item.step}
-                                    className="flex gap-4 p-4 bg-white rounded-lg border border-slate-200 shadow-sm"
-                                >
-                                    <div className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                                        {item.step}
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-slate-900 mb-1">
-                                            {item.title}
-                                        </h3>
-                                        <p className="text-slate-600 text-sm">
-                                            {item.desc}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <h4 className="font-medium text-primary-900 mb-1">
+                            {step.title}
+                        </h4>
+                        <p className="text-sm text-primary-600">
+                            {step.description}
+                        </p>
                     </div>
-                );
+                </div>
+            ))}
+        </div>
+    );
 
-            case 'inputs-outputs':
-                return (
-                    <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🧪</span>
-                            Inputs & Outputs
-                        </h2>
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">✅</span>
-                                    Inputs
-                                </h3>
-                                <Table
-                                    headers={['Input Type', 'Description']}
-                                    rows={[
-                                        [
-                                            'Camera Feed',
-                                            'Live webcam stream for real-time measurement.',
-                                        ],
-                                        [
-                                            'Static Image',
-                                            'PNG, JPG image with an ArUco marker in view.',
-                                        ],
-                                        [
-                                            'ArUco Marker Size',
-                                            'Real-world length (in cm) of one side of the marker, input by user.',
-                                        ],
-                                    ]}
-                                />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">📤</span>
-                                    Outputs
-                                </h3>
-                                <Table
-                                    headers={['Output', 'Description']}
-                                    rows={[
-                                        [
-                                            'Annotated Image',
-                                            'Objects outlined with shape name and size labels.',
-                                        ],
-                                        [
-                                            'CSV / JSON File',
-                                            'Exported data with shape type, position, and measurements (in cm).',
-                                        ],
-                                        [
-                                            'Statistics',
-                                            'Summary of all shapes: count, area, perimeter stats.',
-                                        ],
-                                        [
-                                            'Auto Save',
-                                            'CSV data is saved every few seconds (as per user input).',
-                                        ],
-                                    ]}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                );
+    const VisionCheckContent = () => (
+        <div>
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-primary-900 mb-3">
+                    VisionCheck
+                </h1>
+                <p className="text-xl text-primary-600 leading-relaxed">
+                    A computer vision tool built using Python and OpenCV,
+                    designed to detect and measure the dimensions of real-world
+                    objects in real time using a reference ArUco marker for
+                    scale calibration.
+                </p>
+            </div>
 
-            case 'tech-stack':
-                return (
+            <Section title="Overview">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    VisionCheck is equipped with a graphical user interface
+                    (GUI) built in tkinter and supports real-time video capture,
+                    shape classification, size computation, and exporting of
+                    results.
+                </p>
+                <InfoCard
+                    title="Key Capabilities"
+                    description="Real-time video processing, automated shape detection, precise measurements, and comprehensive data export functionality."
+                    type="info"
+                />
+            </Section>
+
+            <Section title="How It Works">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    The tool leverages ArUco markers to calibrate real-world
+                    scale and uses contour-based shape detection to identify
+                    objects in the camera feed or static images.
+                </p>
+                <InfoCard
+                    title="Core Principle"
+                    description="By knowing the real-world size of the ArUco marker, we can calculate the pixel-to-cm ratio and use it to compute the size of other detected objects."
+                    type="success"
+                />
+            </Section>
+
+            <Section title="Step-by-Step Flow">
+                <StepList
+                    steps={[
+                        {
+                            title: 'Load Camera / Image',
+                            description:
+                                'Live webcam feed or a static image can be selected for processing.',
+                        },
+                        {
+                            title: 'Detect ArUco Marker',
+                            description:
+                                'The tool detects the ArUco marker in the frame and calculates the scale.',
+                        },
+                        {
+                            title: 'Find Contours / Shapes',
+                            description:
+                                "Objects are detected using OpenCV's contour detection methods.",
+                        },
+                        {
+                            title: 'Classify Shapes',
+                            description:
+                                'Shapes such as rectangles, squares, circles, ellipses, and triangles are identified based on geometric properties.',
+                        },
+                        {
+                            title: 'Compute Measurements',
+                            description:
+                                'Dimensions (width, height, perimeter, area) are calculated using the scale from the ArUco marker.',
+                        },
+                        {
+                            title: 'Display & Export',
+                            description:
+                                'Detected shapes and measurements are overlaid on the image. Users can export results to CSV or JSON.',
+                        },
+                    ]}
+                />
+            </Section>
+
+            <Section title="Inputs & Outputs">
+                <div className="grid md:grid-cols-2 gap-8">
                     <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🧰</span>
-                            Tech Stack
-                        </h2>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Inputs
+                        </h3>
                         <Table
-                            headers={['Component', 'Tool/Library Used']}
+                            headers={['Input Type', 'Description']}
                             rows={[
-                                ['Programming Language', 'Python'],
-                                ['Computer Vision', 'OpenCV'],
-                                ['GUI', 'Tkinter'],
-                                ['Marker Detection', 'OpenCV ArUco Module'],
-                                ['Data Export', 'CSV, JSON'],
                                 [
-                                    'Threading',
-                                    'Python threading module (for real-time display)',
+                                    'Camera Feed',
+                                    'Live webcam stream for real-time measurement',
+                                ],
+                                [
+                                    'Static Image',
+                                    'PNG, JPG image with an ArUco marker in view',
+                                ],
+                                [
+                                    'ArUco Marker Size',
+                                    'Real-world length (in cm) of one side of the marker',
                                 ],
                             ]}
                         />
                     </div>
-                );
-
-            case 'setup':
-                return (
                     <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🛠</span>
-                            Setup Instructions
-                        </h2>
-                        <div className="space-y-6">
-                            <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">📦</span>
-                                    Installation
-                                </h3>
-                                <p className="text-slate-700 mb-4">
-                                    Ensure you have Python 3.7+ installed. Then
-                                    install dependencies:
-                                </p>
-                                <CodeBlock>
-                                    pip install opencv-python numpy
-                                </CodeBlock>
-                                <p className="text-slate-700 mb-2">
-                                    If cv2.aruco is missing, install:
-                                </p>
-                                <CodeBlock>
-                                    pip install opencv-contrib-python
-                                </CodeBlock>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">📁</span>
-                                    Folder Structure
-                                </h3>
-                                <CodeBlock language="text">{`object_size_tool/
-├── main.py            # GUI and main logic
-├── output.csv         # (optional) auto-created after detection
-├── marker_dict.png    # ArUco marker to print and use
-└── README.md`}</CodeBlock>
-                            </div>
-                        </div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Outputs
+                        </h3>
+                        <Table
+                            headers={['Output', 'Description']}
+                            rows={[
+                                [
+                                    'Annotated Image',
+                                    'Objects outlined with shape name and size labels',
+                                ],
+                                [
+                                    'CSV / JSON File',
+                                    'Exported data with shape type, position, and measurements',
+                                ],
+                                [
+                                    'Statistics',
+                                    'Summary of all shapes: count, area, perimeter stats',
+                                ],
+                                [
+                                    'Auto Save',
+                                    'CSV data is saved every few seconds as configured',
+                                ],
+                            ]}
+                        />
                     </div>
-                );
+                </div>
+            </Section>
 
-            case 'usage':
-                return (
+            <Section title="Tech Stack">
+                <Table
+                    headers={['Component', 'Technology']}
+                    rows={[
+                        ['Programming Language', 'Python'],
+                        ['Computer Vision', 'OpenCV'],
+                        ['GUI Framework', 'Tkinter'],
+                        ['Marker Detection', 'OpenCV ArUco Module'],
+                        ['Data Export', 'CSV, JSON'],
+                        ['Threading', 'Python threading module'],
+                    ]}
+                />
+            </Section>
+
+            <Section title="How to Use">
+                <div className="space-y-6">
                     <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🚀</span>
-                            How to Use
-                        </h2>
-                        <div className="space-y-8">
-                            <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">🔧</span>
-                                    GUI Instructions
-                                </h3>
-                                <div className="space-y-4">
-                                    {[
-                                        {
-                                            title: 'Start the Tool',
-                                            desc: 'Run the script:',
-                                            code: 'python main.py',
-                                        },
-                                        {
-                                            title: 'Settings Tab',
-                                            desc: 'Enter the real-world ArUco marker size (in cm). Set the auto-save interval. Select shape classification options.',
-                                        },
-                                        {
-                                            title: 'Camera Tab',
-                                            desc: 'Click Start Camera to begin live capture. Or Load Image to process a static image. Detected objects will be displayed with dimensions.',
-                                        },
-                                        {
-                                            title: 'Data Tab',
-                                            desc: 'Export data to CSV or JSON. Generate and view measurement statistics.',
-                                        },
-                                    ].map((item, index) => (
-                                        <div
-                                            key={index}
-                                            className="bg-white p-6 rounded-lg border border-slate-200"
-                                        >
-                                            <h4 className="font-semibold text-slate-900 mb-2">
-                                                {item.title}
-                                            </h4>
-                                            <p className="text-slate-600 mb-2">
-                                                {item.desc}
-                                            </p>
-                                            {item.code && (
-                                                <CodeBlock>
-                                                    {item.code}
-                                                </CodeBlock>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">🧮</span>
-                                    Sample Output (CSV)
-                                </h3>
-                                <Table
-                                    headers={[
-                                        'Shape',
-                                        'Width (cm)',
-                                        'Height (cm)',
-                                        'Area (cm²)',
-                                        'Perimeter (cm)',
-                                    ]}
-                                    rows={[
-                                        [
-                                            'Rectangle',
-                                            '2.3',
-                                            '5.1',
-                                            '11.73',
-                                            '14.8',
-                                        ],
-                                        [
-                                            'Circle',
-                                            '1.8 (diameter)',
-                                            '-',
-                                            '2.54',
-                                            '5.65',
-                                        ],
-                                    ]}
-                                />
-                            </div>
-                        </div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Installation
+                        </h3>
+                        <p className="text-primary-700 mb-3">
+                            Ensure you have Python 3.7+ installed, then install
+                            dependencies:
+                        </p>
+                        <CodeBlock>pip install opencv-python numpy</CodeBlock>
+                        <p className="text-primary-700 mb-2">
+                            If cv2.aruco is missing:
+                        </p>
+                        <CodeBlock>pip install opencv-contrib-python</CodeBlock>
                     </div>
-                );
 
-            case 'examples':
-                return (
                     <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">📊</span>
-                            Example Applications
-                        </h2>
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <FeatureCard
-                                icon="🏭"
-                                title="Industrial Applications"
-                                description="Industrial part size verification and quality control processes."
-                            />
-                            <FeatureCard
-                                icon="📦"
-                                title="Packaging Inspection"
-                                description="Real-time packaging inspection and dimensional validation."
-                            />
-                            <FeatureCard
-                                icon="🎓"
-                                title="Educational Use"
-                                description="Academic and educational demonstrations for computer vision concepts."
-                            />
-                            <FeatureCard
-                                icon="🏠"
-                                title="DIY Tools"
-                                description="DIY home measurement tools for various household applications."
-                            />
-                        </div>
-                    </div>
-                );
-
-            case 'limitations':
-                return (
-                    <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">📍</span>
-                            Limitations
-                        </h2>
-                        <div className="space-y-4">
-                            {[
-                                'Requires clear visibility of ArUco marker.',
-                                'Accuracy depends on camera angle and resolution.',
-                                'Complex or overlapping shapes may be misclassified.',
-                            ].map((limitation, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
-                                >
-                                    <span className="text-yellow-600 text-lg">
-                                        ⚠️
-                                    </span>
-                                    <p className="text-yellow-800">
-                                        {limitation}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-
-            case 'improvements':
-                return (
-                    <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="text-4xl">🔄</span>
-                            Future Improvements
-                        </h2>
-                        <div className="space-y-4">
-                            {[
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Usage Instructions
+                        </h3>
+                        <StepList
+                            steps={[
                                 {
-                                    icon: '🎥',
-                                    title: 'Video File Support',
-                                    desc: 'Add support for processing video files in addition to live camera feeds.',
+                                    title: 'Start the Tool',
+                                    description: 'Run: python main.py',
                                 },
                                 {
-                                    icon: '📐',
-                                    title: '3D Object Estimation',
-                                    desc: 'Include support for non-flat object estimation and 3D measurements.',
+                                    title: 'Settings Tab',
+                                    description:
+                                        'Enter the real-world ArUco marker size (in cm), set auto-save interval, select shape classification options',
                                 },
                                 {
-                                    icon: '📦',
-                                    title: 'PyPi Package',
-                                    desc: 'Upload to PyPi as a package for easier installation and distribution.',
+                                    title: 'Camera Tab',
+                                    description:
+                                        'Click Start Camera for live capture or Load Image for static processing',
                                 },
                                 {
-                                    icon: '☁️',
-                                    title: 'Cloud Integration',
-                                    desc: 'Cloud integration for dataset storage and remote processing capabilities.',
+                                    title: 'Data Tab',
+                                    description:
+                                        'Export data to CSV or JSON, generate and view measurement statistics',
                                 },
-                            ].map((improvement, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-start gap-4 p-6 bg-white border border-slate-200 rounded-lg shadow-sm"
-                                >
-                                    <span className="text-2xl">
-                                        {improvement.icon}
-                                    </span>
-                                    <div>
-                                        <h3 className="font-semibold text-slate-900 mb-1">
-                                            {improvement.title}
-                                        </h3>
-                                        <p className="text-slate-600 text-sm">
-                                            {improvement.desc}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                            ]}
+                        />
                     </div>
-                );
+                </div>
+            </Section>
 
-            default:
-                return <div>Select a section to view content</div>;
-        }
-    };
+            <Section title="Limitations">
+                <div className="space-y-3">
+                    {[
+                        'Requires clear visibility of ArUco marker',
+                        'Accuracy depends on camera angle and resolution',
+                        'Complex or overlapping shapes may be misclassified',
+                    ].map((limitation, index) => (
+                        <InfoCard
+                            key={index}
+                            title="Constraint"
+                            description={limitation}
+                            type="warning"
+                        />
+                    ))}
+                </div>
+            </Section>
+
+            <Section title="Future Improvements">
+                <FeatureGrid
+                    features={[
+                        {
+                            title: 'Video File Support',
+                            description:
+                                'Add support for processing video files in addition to live camera feeds',
+                        },
+                        {
+                            title: '3D Object Estimation',
+                            description:
+                                'Include support for non-flat object estimation and 3D measurements',
+                        },
+                        {
+                            title: 'PyPi Package',
+                            description:
+                                'Upload to PyPi as a package for easier installation and distribution',
+                        },
+                        {
+                            title: 'Cloud Integration',
+                            description:
+                                'Cloud integration for dataset storage and remote processing capabilities',
+                        },
+                    ]}
+                />
+            </Section>
+        </div>
+    );
+
+    const CockpitContent = () => (
+        <div>
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-primary-900 mb-3">
+                    Cockpit Voice Command System
+                </h1>
+                <p className="text-xl text-primary-600 leading-relaxed">
+                    A real-time voice command system designed to recognize
+                    spoken instructions using a trigger word and execute
+                    matching commands. Built with FastAPI, Streamlit, Whisper,
+                    and Vosk.
+                </p>
+            </div>
+
+            <Section title="Overview">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    The system uses advanced speech recognition to detect
+                    trigger words like "system", "computer", or "assistant" and
+                    execute corresponding commands through a robust backend
+                    architecture.
+                </p>
+                <InfoCard
+                    title="Architecture"
+                    description="FastAPI backend handles audio processing and transcription, while Streamlit provides an intuitive frontend interface with real-time WebSocket communication."
+                    type="info"
+                />
+            </Section>
+
+            <Section title="How It Works">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    The system continuously monitors audio input for trigger
+                    words, processes speech using Whisper for transcription,
+                    matches commands using fuzzy logic, and provides audio
+                    feedback through text-to-speech synthesis.
+                </p>
+                <FeatureGrid
+                    features={[
+                        {
+                            title: 'Voice-triggered Detection',
+                            description:
+                                'Uses Whisper for accurate trigger word recognition',
+                        },
+                        {
+                            title: 'Real-time Speech Recognition',
+                            description:
+                                'Continuous audio processing with low latency',
+                        },
+                        {
+                            title: 'Text-to-Speech Feedback',
+                            description:
+                                'Both server-side (pyttsx3) and browser-based synthesis',
+                        },
+                        {
+                            title: 'WebSocket Communication',
+                            description:
+                                'Real-time data exchange between backend and frontend',
+                        },
+                        {
+                            title: 'Command Matching',
+                            description:
+                                'Fuzzy logic matching using difflib for command recognition',
+                        },
+                        {
+                            title: 'Fallback Detection',
+                            description:
+                                'Optional Vosk integration for enhanced reliability',
+                        },
+                    ]}
+                />
+            </Section>
+
+            <Section title="Step-by-Step Flow">
+                <StepList
+                    steps={[
+                        {
+                            title: 'Audio Capture',
+                            description:
+                                'System continuously monitors microphone input for speech',
+                        },
+                        {
+                            title: 'Trigger Detection',
+                            description:
+                                'Whisper processes audio to detect configured trigger words',
+                        },
+                        {
+                            title: 'Command Recognition',
+                            description:
+                                'Upon trigger detection, system captures and transcribes the full command',
+                        },
+                        {
+                            title: 'Command Matching',
+                            description:
+                                'Fuzzy matching algorithm compares transcribed text against predefined commands',
+                        },
+                        {
+                            title: 'Command Execution',
+                            description:
+                                'Matched commands trigger corresponding backend functions',
+                        },
+                        {
+                            title: 'Audio Feedback',
+                            description:
+                                'System provides voice confirmation and status updates',
+                        },
+                    ]}
+                />
+            </Section>
+
+            <Section title="Inputs & Outputs">
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Inputs
+                        </h3>
+                        <Table
+                            headers={['Input Type', 'Description']}
+                            rows={[
+                                [
+                                    'Voice Commands',
+                                    'Spoken instructions following trigger word detection',
+                                ],
+                                [
+                                    'Configuration File',
+                                    'JSON file containing valid commands and their mappings',
+                                ],
+                                [
+                                    'Audio Stream',
+                                    'Real-time microphone input for continuous monitoring',
+                                ],
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Outputs
+                        </h3>
+                        <Table
+                            headers={['Output', 'Description']}
+                            rows={[
+                                [
+                                    'Command Execution',
+                                    'Automated execution of matched command functions',
+                                ],
+                                [
+                                    'Audio Feedback',
+                                    'Text-to-speech confirmation and status updates',
+                                ],
+                                [
+                                    'WebSocket Messages',
+                                    'Real-time communication between frontend and backend',
+                                ],
+                                [
+                                    'Transcription Logs',
+                                    'Recorded speech recognition results for debugging',
+                                ],
+                            ]}
+                        />
+                    </div>
+                </div>
+            </Section>
+
+            <Section title="Tech Stack">
+                <Table
+                    headers={['Component', 'Technology']}
+                    rows={[
+                        ['Backend Framework', 'FastAPI'],
+                        ['Frontend Interface', 'Streamlit'],
+                        ['Speech Recognition', 'OpenAI Whisper'],
+                        ['Fallback ASR', 'Vosk (optional)'],
+                        ['Text-to-Speech', 'pyttsx3, Web Speech API'],
+                        ['Communication', 'WebSocket'],
+                        ['Command Matching', 'difflib (fuzzy matching)'],
+                    ]}
+                />
+            </Section>
+
+            <Section title="How to Use">
+                <div className="space-y-6">
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Installation
+                        </h3>
+                        <CodeBlock>
+                            git clone
+                            https://github.com/your-username/cockpit-voice-assistant.git
+                            cd cockpit-voice-assistant
+                        </CodeBlock>
+
+                        <CodeBlock>
+                            python -m venv venv source venv/bin/activate # On
+                            Windows: venv\Scripts\activate
+                        </CodeBlock>
+
+                        <CodeBlock>pip install -r requirements.txt</CodeBlock>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Configuration
+                        </h3>
+                        <p className="text-primary-700 mb-3">
+                            Edit{' '}
+                            <code className="bg-primary-100 px-2 py-1 rounded text-sm">
+                                utils/commands.json
+                            </code>{' '}
+                            to define supported commands:
+                        </p>
+                        <CodeBlock language="json">{`{
+  "open landing gear": "gear_down()",
+  "turn on lights": "lights_on()",
+  "shut engine": "engine_shutdown()"
+}`}</CodeBlock>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Running the Application
+                        </h3>
+                        <StepList
+                            steps={[
+                                {
+                                    title: 'Start Backend Server',
+                                    description:
+                                        'Run: python backend_server.py (Available at http://localhost:8000)',
+                                },
+                                {
+                                    title: 'Launch Frontend',
+                                    description:
+                                        'In new terminal: streamlit run streamlit_app.py (Opens at http://localhost:8501)',
+                                },
+                                {
+                                    title: 'Configure Trigger Words',
+                                    description:
+                                        "Default triggers: 'system', 'computer', 'assistant'",
+                                },
+                                {
+                                    title: 'Test Voice Commands',
+                                    description:
+                                        'Speak trigger word followed by configured command',
+                                },
+                            ]}
+                        />
+                    </div>
+                </div>
+            </Section>
+
+            <Section title="Limitations">
+                <div className="space-y-3">
+                    {[
+                        'Requires stable microphone access and clear audio input',
+                        'Performance depends on ambient noise levels and speaker clarity',
+                        'WebSocket connection required between frontend and backend',
+                        'PyAudio installation may require additional system dependencies',
+                    ].map((limitation, index) => (
+                        <InfoCard
+                            key={index}
+                            title="Constraint"
+                            description={limitation}
+                            type="warning"
+                        />
+                    ))}
+                </div>
+            </Section>
+
+            <Section title="Future Improvements">
+                <FeatureGrid
+                    features={[
+                        {
+                            title: 'Action Handlers',
+                            description:
+                                'Add comprehensive action handlers to execute actual system commands',
+                        },
+                        {
+                            title: 'Multi-language Support',
+                            description:
+                                'Extend recognition capabilities to multiple languages',
+                        },
+                        {
+                            title: 'Authentication',
+                            description:
+                                'Implement speaker verification and user authentication',
+                        },
+                        {
+                            title: 'Confidence Scoring',
+                            description:
+                                'Enhanced confidence scoring for improved fuzzy matching accuracy',
+                        },
+                        {
+                            title: 'Command Learning',
+                            description:
+                                'Dynamic learning system for new command patterns',
+                        },
+                        {
+                            title: 'Integration APIs',
+                            description:
+                                'REST APIs for integration with external systems and IoT devices',
+                        },
+                    ]}
+                />
+            </Section>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            <NavigationSidebar />
-            <main className="ml-64 p-8">
-                <div className="max-w-4xl mx-auto">{renderContent()}</div>
+        <div className="relative min-h-screen bg-primary-50">
+            <a
+                href="/landing"
+                className="absolute top-3 left-8 z-20 p-3 rounded-full hover:bg-gray-200 duration-200"
+            >
+                <ArrowLeft
+                    color="black"
+                    className="w-5 h-5 text-primary-600 hover:text-primary-800 transition-colors"
+                />
+            </a>
+            <ProjectSelector />
+            <main className="max-w-7xl mx-auto px-6 py-8">
+                {activeProject === 'visioncheck' ? (
+                    <VisionCheckContent />
+                ) : (
+                    <CockpitContent />
+                )}
             </main>
         </div>
     );
 };
 
-export default DocsPage;
+export default DocumentationPage;

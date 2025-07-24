@@ -151,9 +151,9 @@ export default function LandingBackdrop({
                                 </HoverCard.Positioner>
                             </Portal>
                         </HoverCard.Root>
-                        <button className="text-gray-600 px-3 py-1.5 font-polysans font-medium text-lg flex flex-row items-center gap-1.5 rounded-xl hover:text-black hover:bg-gray-100 duration-300">
+                        <a href="/docs" className="text-gray-600 px-3 py-1.5 font-polysans font-medium text-lg flex flex-row items-center gap-1.5 rounded-xl hover:text-black hover:bg-gray-100 duration-300">
                             Docs
-                        </button>
+                        </a>
                     </div>
                     {!isAuth ? (
                         <InteractiveHoverButton
@@ -172,24 +172,7 @@ export default function LandingBackdrop({
 
             {/* Content layer */}
             <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
-                {children || (
-                    <div className="text-center max-w-4xl">
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-gray-900 leading-tight mb-8">
-                            The editor suite to build products with{' '}
-                            <span className="font-serif italic">
-                                version control efficiency
-                            </span>
-                        </h1>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <button className="px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-colors">
-                                Read the docs →
-                            </button>
-                            <button className="px-8 py-4 bg-white/20 backdrop-blur-sm border border-white/30 text-gray-900 rounded-full font-semibold hover:bg-white/30 transition-colors">
-                                Try it live
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {children}
             </div>
 
             {/* CSS animations */}
