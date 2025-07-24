@@ -42,18 +42,7 @@ export default function SimilarSnagsList({
             key: `field_${key}`,
             label: key.charAt(0).toUpperCase() + key.slice(1),
             render: (_: any, row: SnagItem) => row.fields[key] ?? '-',
-        })),
-        {
-            key: 'similarity_score',
-            label: 'Similarity Score',
-            render: (_: any, row: SnagItem) => row.similarity_score.toFixed(4),
-        },
-        {
-            key: 'similarity_percentage',
-            label: 'Similarity %',
-            render: (_: any, row: SnagItem) =>
-                `${row.similarity_percentage.toFixed(2)}%`,
-        },
+        }))
     ];
 
     return (
