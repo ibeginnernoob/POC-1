@@ -45,7 +45,10 @@ export default function FeatureCard() {
                     <h3 className="font-polysans text-lg text-gray-600 hover:cursor-pointer font-[400]">
                         OpenCV Features
                     </h3>
-                    <a href='/opencv' className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100">
+                    <a
+                        href="/opencv"
+                        className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100"
+                    >
                         <div className="pt-1.5">
                             <ScanEye
                                 size={22}
@@ -122,7 +125,7 @@ export default function FeatureCard() {
                             SnaGenie
                         </h2>
                         <button
-                            onClick={() => navigate('/snag/new')}
+                            onClick={() => navigate('/docs/snag')}
                             className="w-fit px-4 py-2 bg-white rounded-lg font-medium text-black font-roboto text-base hover:rounded-xl hover:bg-gray-100 duration-300 shadow-lg"
                         >
                             Go to Docs →
@@ -143,7 +146,10 @@ export default function FeatureCard() {
                         <h2 className="text-2xl font-bold text-white font-polysans">
                             VisionCheck
                         </h2>
-                        <button className="w-fit px-4 py-2 bg-white rounded-lg font-medium text-black font-roboto text-base hover:rounded-xl hover:bg-gray-100 duration-300 shadow-lg">
+                        <button
+                            onClick={() => navigate('/docs/visioncheck')}
+                            className="w-fit px-4 py-2 bg-white rounded-lg font-medium text-black font-roboto text-base hover:rounded-xl hover:bg-gray-100 duration-300 shadow-lg"
+                        >
                             Go to Docs →
                         </button>
                     </div>

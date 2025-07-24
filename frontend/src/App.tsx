@@ -17,7 +17,8 @@ function App() {
             <Route path="/snag/:snagId" element={<Snag />} />
             <Route path="/opencv" element={<OpenCV />} />
             <Route path="/" element={<LoginPage />} />
-			<Route path="/docs" element={<DocsPage />} />
+            <Route path="/docs/" element={<DocsPage />} />
+            <Route path="/docs/:docId" element={<DocsPage />} />
             <Route path="/signup" element={<SignupPage />} />
             {/* <Route path="/test" element={<Test />} /> */}
             <Route path="*" element={<NotFound />} />
