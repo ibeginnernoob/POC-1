@@ -66,7 +66,7 @@ export default function NewChat() {
 
     useEffect(() => {
         if (!isAuth && !isLoadingAuthStatus) {
-            navigate('/login');
+            navigate('/landing');
         }
     }, [isAuth, isLoadingAuthStatus]);
 

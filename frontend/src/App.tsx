@@ -12,13 +12,13 @@ import '@/index.css';
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/snag/new" element={<NewChat />} />
             <Route path="/snag/:snagId" element={<Snag />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />            
-            <Route path="/test" element={<Test />} />
-			<Route path="*" element={<NotFound />} />
+            <Route path="/" element={<LoginPage />} />
+            {/* <Route path="/signup" element={<SignupPage />} /> */}
+            {/* <Route path="/test" element={<Test />} /> */}
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }

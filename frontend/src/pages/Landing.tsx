@@ -87,7 +87,7 @@ export function AnimatedBanner() {
     return (
         <a href="/snag/new">
             <motion.div
-                className="w-full py-3 text-center text-white font-medium"
+                className="w-full py-5 text-center text-white font-medium"
                 animate={{
                     background: [
                         'linear-gradient(90deg, #ec4899, #8b5cf6)',

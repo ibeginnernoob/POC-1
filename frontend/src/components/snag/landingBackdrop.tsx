@@ -112,16 +112,16 @@ export default function LandingBackdrop({
             />
 
             <div className="bg-transparent sticky top-4 left-0 right-0 py-0 opacity-100 z-10">
-                <div className="bg-white mx-auto px-5 py-1 rounded-lg max-w-4xl flex flex-row items-center justify-between backdrop-blur-sm">
-                    <div className="flex flex-row items-center ">
+                <div className="bg-white mx-auto px-5 py-3 rounded-lg max-w-6xl flex flex-row items-center justify-between backdrop-blur-sm">
+                    <div className="flex flex-row items-center">
                         <img
                             src={'../../public/imgs/hal-logo.png'}
-                            className="h-11 w-auto"
+                            className="h-12 w-auto"
                             alt="HAL Logo"
                         />
                         <img
                             src={'../../public/imgs/iiit-logo.png'}
-                            className="h-[52px] w-auto"
+                            className="h-[60px] w-auto"
                             alt="IIIT Logo"
                         />
                     </div>
@@ -141,7 +141,7 @@ export default function LandingBackdrop({
                                 </button>
                             </HoverCard.Trigger>
                             <Portal>
-                                <HoverCard.Positioner className="mt-3">
+                                <HoverCard.Positioner className="mt-5">
                                     <HoverCard.Content
                                         maxWidth="1000px"
                                         className="flex-1 w-full"
@@ -157,14 +157,14 @@ export default function LandingBackdrop({
                     </div>
                     {!isAuth ? (
                         <InteractiveHoverButton
-                            onClick={() => navigate('/login')}
+                            onClick={() => navigate('/')}
                             className="border-[0.5px] border-solid border-gray-300 hover:border-none"
                         >
                             Sign In
                         </InteractiveHoverButton>
                     ) : (
                         <div className="p-3 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User size={20} />
+                            <User size={22} />
                         </div>
                     )}
                 </div>

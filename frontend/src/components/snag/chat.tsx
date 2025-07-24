@@ -41,7 +41,7 @@ function Message({ details }: { details: SnagDetails | null | undefined }) {
                 <div className="rounded-full p-2 bg-blue-600">
                     <Bot className="h-4 w-4 md:h-6 md:w-6" color="white" />
                 </div>
-                <div className="bg-blue-100 max-w-2xl px-8 py-4 rounded-2xl">
+                <div className="bg-blue-100 max-w-2xl px-8 py-4 rounded-2xl shadow-lg">
                     {!details ? (
                         <p className="text-sm font-medium md:text-base">
                             <TypewriterAnimation text={text} />

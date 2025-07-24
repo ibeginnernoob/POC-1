@@ -23,7 +23,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (isAuth) {
-            navigation('/');
+            navigation('/landing');
         }
     }, [isAuth, isLoadingIsAuth]);
 
@@ -60,7 +60,7 @@ const LoginPage = () => {
                 console.log(resBody.msg);
             }
 
-            navigation('/');
+            navigation('/landing');
         } catch (e: any) {
             console.log(e);
             alert(e.message);

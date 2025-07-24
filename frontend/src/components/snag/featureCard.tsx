@@ -76,7 +76,10 @@ export default function FeatureCard() {
                     <h3 className="font-polysans text-lg text-gray-600 hover:cursor-pointer font-[400]">
                         AI Speech Features
                     </h3>
-                    <div className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100">
+                    <a
+                        href="http://192.168.2.54:8501/"
+                        className="flex flex-row items-start gap-3 max-w-md px-3 py-2 rounded-xl hover:bg-gray-100"
+                    >
                         <div className="pt-1.5">
                             <Speech
                                 size={22}
@@ -100,7 +103,7 @@ export default function FeatureCard() {
                                 system
                             </p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
             <div className="flex flex-col gap-8">

@@ -39,7 +39,7 @@ export default function Snag() {
 
     useEffect(() => {
         if (!isAuth && !isLoadingIsAuth) {
-            navigate('/login');
+            navigate('/landing');
         }
     }, [isAuth]);
 
