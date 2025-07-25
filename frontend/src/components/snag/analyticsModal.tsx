@@ -3,99 +3,100 @@ import { RadarStatsChart } from "@/components/snag/analytics/radarStatsChart";
 import BarStatsChart from "@/components/snag/analytics/barStatsChart";
 import { PieStatsChart } from "@/components/snag/analytics/pieStatsChart";
 import { useState } from "react";
+import { type SnagDetails } from "@/types/snag";
 // import axios from 'axios';
 
-const AnalyticsModal = ({ isLoading }: { isLoading: boolean }) => {
-  const data = {
-    timestamp: "2025-07-02T19:29:43.963529",
-    query:
-      "Query: TR Vibrations\nHelicopter Type: string\nFlight Hours: string\nEvent Type: string\nStatus: string\nRaised By: string",
-    status: "success",
-    based_on_historical_cases: 5,
-    analytics: {
-      total_similar_cases_found: 5,
-      average_similarity_percentage: 91.32,
-      highest_similarity_percentage: 91.71,
-      lowest_similarity_percentage: 90.58,
-      recommendation_reliability: "high",
-    },
-    RadarChart: [
-      {
-        category: "Complexity",
-        value: 3,
-      },
-      {
-        category: "TimeNeeded",
-        value: 3,
-      },
-      {
-        category: "ToolsRequired",
-        value: 2,
-      },
-      {
-        category: "RiskLevel",
-        value: 2,
-      },
-      {
-        category: "Frequency",
-        value: 4,
-      },
-    ],
-    PieChart: [
-      {
-        category: "TR Vibration Data Analysis",
-        value: 80,
-      },
-      {
-        category: "Tail Rotor High",
-        value: 10,
-      },
-      {
-        category: "MR and TR Vibration Data",
-        value: 10,
-      },
-      {
-        category: "Other",
-        value: 10,
-      },
-    ],
-    BarChart1: [
-      {
-        category: "PLT",
-        value: 2,
-      },
-      {
-        category: "GR",
-        value: 1,
-      },
-      {
-        category: "Ground Observation",
-        value: 3,
-      },
-    ],
-    BarChart2: [
-      {
-        category: "IA",
-        value: 18,
-      },
-      {
-        category: "J",
-        value: 5,
-      },
-      {
-        category: "ZD",
-        value: 4,
-      },
-      {
-        category: "IN",
-        value: 3,
-      },
-      {
-        category: "CG",
-        value: 5,
-      },
-    ],
-  };
+const AnalyticsModal = ({ isLoading, data }: {isLoading: boolean ,data:SnagDetails}) => {
+  // const data = {
+  //   timestamp: "2025-07-02T19:29:43.963529",
+  //   query:
+  //     "Query: TR Vibrations\nHelicopter Type: string\nFlight Hours: string\nEvent Type: string\nStatus: string\nRaised By: string",
+  //   status: "success",
+  //   based_on_historical_cases: 5,
+  //   analytics: {
+  //     total_similar_cases_found: 5,
+  //     average_similarity_percentage: 91.32,
+  //     highest_similarity_percentage: 91.71,
+  //     lowest_similarity_percentage: 90.58,
+  //     recommendation_reliability: "high",
+  //   },
+  //   RadarChart: [
+  //     {
+  //       category: "Complexity",
+  //       value: 3,
+  //     },
+  //     {
+  //       category: "TimeNeeded",
+  //       value: 3,
+  //     },
+  //     {
+  //       category: "ToolsRequired",
+  //       value: 2,
+  //     },
+  //     {
+  //       category: "RiskLevel",
+  //       value: 2,
+  //     },
+  //     {
+  //       category: "Frequency",
+  //       value: 4,
+  //     },
+  //   ],
+  //   PieChart: [
+  //     {
+  //       category: "TR Vibration Data Analysis",
+  //       value: 80,
+  //     },
+  //     {
+  //       category: "Tail Rotor High",
+  //       value: 10,
+  //     },
+  //     {
+  //       category: "MR and TR Vibration Data",
+  //       value: 10,
+  //     },
+  //     {
+  //       category: "Other",
+  //       value: 10,
+  //     },
+  //   ],
+  //   BarChart1: [
+  //     {
+  //       category: "PLT",
+  //       value: 2,
+  //     },
+  //     {
+  //       category: "GR",
+  //       value: 1,
+  //     },
+  //     {
+  //       category: "Ground Observation",
+  //       value: 3,
+  //     },
+  //   ],
+  //   BarChart2: [
+  //     {
+  //       category: "IA",
+  //       value: 18,
+  //     },
+  //     {
+  //       category: "J",
+  //       value: 5,
+  //     },
+  //     {
+  //       category: "ZD",
+  //       value: 4,
+  //     },
+  //     {
+  //       category: "IN",
+  //       value: 3,
+  //     },
+  //     {
+  //       category: "CG",
+  //       value: 5,
+  //     },
+  //   ],
+  // };
 
   // Rest of your component remains the same...
   type ReliabilityLevel = "low" | "medium" | "high";
@@ -132,8 +133,8 @@ const AnalyticsModal = ({ isLoading }: { isLoading: boolean }) => {
                   Radar Stats
                 </span>
               </h2>
-              <RadarStatsChart data={data.RadarChart} />
-            </div>
+              <RadarStatsChart data={data.graphs.RadarChart ?? []} />
+            </div> 
 
             <div className="transform hover:scale-105 transition-all duration-300">
               <h2 className="text-2xl font-bold text-white mb-4 text-center">
@@ -141,7 +142,7 @@ const AnalyticsModal = ({ isLoading }: { isLoading: boolean }) => {
                   Snag Category Distribution
                 </span>
               </h2>
-              <PieStatsChart data={data.PieChart} />
+              <PieStatsChart data={data.graphs.PieChart ?? []} />
             </div>
           </div>
 
@@ -153,7 +154,7 @@ const AnalyticsModal = ({ isLoading }: { isLoading: boolean }) => {
                 </span>
               </h2>
               <BarStatsChart
-                data={data.BarChart1}
+                data={data.graphs.BarChart1 ?? []}
                 color="#10b981"
                 height={250}
                 gradient={true}
@@ -167,94 +168,11 @@ const AnalyticsModal = ({ isLoading }: { isLoading: boolean }) => {
                 </span>
               </h2>
               <BarStatsChart
-                data={data.BarChart2}
+                data={data.graphs.BarChart2 ?? []}
                 color="#059669"
                 height={250}
                 gradient={true}
               />
-            </div>
-
-            <div className="transform hover:scale-105 transition-all duration-300">
-              <h2 className="text-xl font-bold text-white mb-4 text-center">
-                <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                  Total Similar Cases
-                </span>
-              </h2>
-              <BarStatsChart
-                data={[
-                  {
-                    category: "Cases",
-                    value: data.analytics.total_similar_cases_found,
-                  },
-                ]}
-                color="#f97316"
-                height={200}
-                gradient={true}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="transform hover:scale-105 transition-all duration-300">
-              <h2 className="text-xl font-bold text-white mb-4 text-center">
-                <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                  Similarity Percentages
-                </span>
-              </h2>
-              <BarStatsChart
-                data={[
-                  {
-                    category: "Avg %",
-                    value: data.analytics.average_similarity_percentage,
-                  },
-                  {
-                    category: "High %",
-                    value: data.analytics.highest_similarity_percentage,
-                  },
-                  {
-                    category: "Low %",
-                    value: data.analytics.lowest_similarity_percentage,
-                  },
-                ]}
-                color="#6366f1"
-                height={280}
-                gradient={true}
-              />
-            </div>
-
-            <div className="transform hover:scale-105 transition-all duration-300">
-              <h2 className="text-xl font-bold text-white mb-4 text-center">
-                <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                  Recommendation Reliability
-                </span>
-              </h2>
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-8 shadow-lg border border-green-200 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl font-bold text-green-600 mb-2">
-                    {data.analytics.recommendation_reliability.toUpperCase()}
-                  </div>
-                  <div className="text-2xl text-green-700 font-semibold">
-                    Reliability Level
-                  </div>
-                  <div className="mt-4">
-                    <div className="w-32 h-4 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-500"
-                        // style={{
-                        //     width: `${
-                        //         (reliabilityLevel[
-                        //             data.analytics
-                        //                 .recommendation_reliability
-                        //         ] /
-                        //             3) *
-                        //         100
-                        //     }%`,
-                        // }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 

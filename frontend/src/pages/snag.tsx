@@ -22,11 +22,16 @@ export default function Snag() {
     const [snagFetchRunner, setSnagFetchRunner] = useState<number>(0);
     const { snagDetails, isLoading } = useFetch(snagId, snagFetchRunner);
     const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
-
     const [openHistSnags, setOpenHistSnags] = useState(false);
     const [openAnalytics, setOpenAnalytics] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
+    const isAnalysisDataReady = Boolean(
+        snagDetails &&
+        snagDetails.graphs &&
+        snagDetails.graphs.RadarChart &&
+        snagDetails.graphs.BarChart1 // You can add more checks if needed
+      );
+      
     const similar_historical_snags =
         snagDetails?.similar_historical_snags || [];
 
@@ -70,7 +75,6 @@ export default function Snag() {
                 if (!res || res.status !== 200) {
                     throw new Error('Failed to fetch analysis');
                 }
-
                 setSnagFetchRunner((prev) => prev + 1);
             } catch (e: any) {
                 console.log(e);
@@ -106,12 +110,22 @@ export default function Snag() {
                 </Fade>
             </Modal>
             <Modal open={openAnalytics} onClose={() => setOpenAnalytics(false)}>
-                <Fade in={openAnalytics}>
-                    <Box sx={analyticsStyles}>
-                        <AnalyticsModal isLoading={isLoadingAnalysis} />
-                    </Box>
-                </Fade>
+            <Fade in={openAnalytics}>
+                <Box sx={analyticsStyles}>
+                {isAnalysisDataReady ? (
+                    <AnalyticsModal
+                    isLoading={isLoadingAnalysis}
+                    data={snagDetails}
+                    />
+                ) : (
+                    <Loader />
+                )}
+                </Box>
+            </Fade>
             </Modal>
+
+
+
             <Header
                 handleSidebarOpen={handleSidebarOpen}
                 isNew={false}

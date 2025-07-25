@@ -1,3 +1,8 @@
+export type ChartData = {
+  category: string;
+  value: number;
+};
+
 export type SnagDetails = {
   _id: string;
   userId: string;
@@ -19,6 +24,11 @@ export type SnagDetails = {
     lowest_similarity_percentage: string;
     recommendation_reliability: string;
   };
-  graphs: any;
+  graphs: {
+    RadarChart?: ChartData[];
+    PieChart?: ChartData[];
+    BarChart1?: ChartData[];
+    BarChart2?: ChartData[];
+  };
   created_at: Date;
 };
