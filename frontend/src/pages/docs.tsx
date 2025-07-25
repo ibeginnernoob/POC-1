@@ -83,6 +83,12 @@ const DocumentationPage = ({
             title: 'Cockpit Voice Command System',
             subtitle: 'Real-time Voice Recognition',
         },
+        // Added snag project to the array for consistency
+        {
+            id: 'snag',
+            title: 'SnaGenie',
+            subtitle: 'Aircraft Snag Rectification System',
+        },
     ];
 
     const ProjectSelector: React.FC = () => (
@@ -771,6 +777,300 @@ const DocumentationPage = ({
         </div>
     );
 
+    const SnaGenieContent = () => (
+        <div>
+            <div className="mb-8">
+                <h1 className="text-4xl font-bold text-primary-900 mb-3">
+                    ✈️ Aircraft Snag Rectification System
+                </h1>
+                <p className="text-xl text-primary-600 leading-relaxed">
+                    A real-time intelligent snag rectification system that uses Retrieval-Augmented Generation (RAG) to diagnose and resolve aircraft snags based on historical records. Built using FastAPI, LangChain, and Gemma 2 for LLM-based reasoning.
+                </p>
+            </div>
+
+            <Section title="🔍 Overview">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    This system leverages the power of Gemma 2 LLM, LangChain’s retrieval infrastructure, and a vector store (e.g., FAISS) to identify and suggest rectification strategies for aircraft snags, using both structured and unstructured historical data.
+                </p>
+            </Section>
+
+            <Section title="🏗️ Architecture">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    FastAPI serves as the backend API server for snag ingestion, retrieval, and LLM responses. LangChain integrates with Gemma 2 9B using RAG pipelines to provide relevant, explainable recommendations. FAISS or any supported vector store is used to index historical snag data. MongoDB stores snag logs, recommendations, and rectification metadata.
+                </p>
+            </Section>
+
+            <Section title="⚙️ How It Works">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    User submits a snag description through a REST or frontend form. The snag is embedded using Hugging Face sentence transformers. LangChain retrieves the top k historical cases using FAISS. Context + query is passed to Gemma 2 LLM via a prompt template. The system returns: Likely cause, Step-by-step rectification, Any safety precautions. The output is stored and sent back to the frontend.
+                </p>
+            </Section>
+
+            <Section title="✈️ Features">
+                <FeatureGrid
+                    features={[
+                        {
+                            title: '🧠 LLM-Powered Analysis',
+                            description:
+                                'Uses Gemma 2 (via Hugging Face) for generating rectification reasoning',
+                        },
+                        {
+                            title: '📚 RAG via LangChain',
+                            description:
+                                'Top k similar snags retrieved from FAISS vector store. Injected into prompt context for high-accuracy responses',
+                        },
+                        {
+                            title: '🧩 Custom Prompt Templates',
+                            description:
+                                'Domain-specific prompt crafted for aircraft maintenance and snag resolution',
+                        },
+                        {
+                            title: '📈 Analytics-Ready Storage',
+                            description:
+                                'Each response includes structured metadata for dashboards',
+                        },
+                        {
+                            title: '📡 REST API Access',
+                            description:
+                                'FastAPI endpoints for snag submission, resolution, logs, and charts',
+                        },
+                    ]}
+                />
+            </Section>
+
+            <Section title="📥 Inputs & 📤 Outputs">
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Inputs
+                        </h3>
+                        <Table
+                            headers={['Input Type', 'Description']}
+                            rows={[
+                                [
+                                    'Snag Query',
+                                    'Natural language input describing a snag',
+                                ],
+                                [
+                                    'Historical Data',
+                                    'JSONL or CSV files containing past snags',
+                                ],
+                                [
+                                    'Vector Index',
+                                    'FAISS index of embedded historical cases',
+                                ],
+                                [
+                                    'Configuration',
+                                    'Prompt templates, model choice, and retrieval parameters',
+                                ],
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            Outputs
+                        </h3>
+                        <Table
+                            headers={['Output Type', 'Description']}
+                            rows={[
+                                [
+                                    'Rectification Plan',
+                                    'Suggested steps to resolve the snag',
+                                ],
+                                [
+                                    'Likely Cause',
+                                    'Reason behind the snag, inferred by LLM',
+                                ],
+                                [
+                                    'Retrieval Logs',
+                                    'List of historical cases retrieved',
+                                ],
+                                [
+                                    'JSON Response',
+                                    'Structured API response',
+                                ],
+                                [
+                                    'Dashboard Analytics',
+                                    'Breakdown for Radar, Pie, and Bar charts',
+                                ],
+                            ]}
+                        />
+                    </div>
+                </div>
+            </Section>
+
+            <Section title="🧪 Step-by-Step Flow">
+                <StepList
+                    steps={[
+                        {
+                            title: 'Snag Submission',
+                            description:
+                                'User sends POST request to /resolve-snag endpoint with snag description.',
+                        },
+                        {
+                            title: 'Embedding & Retrieval',
+                            description:
+                                'Snag is embedded and queried against vector DB.',
+                        },
+                        {
+                            title: 'Prompt Construction',
+                            description:
+                                'Top matches are formatted and inserted into the LLM prompt.',
+                        },
+                        {
+                            title: 'Gemma 2 Inference',
+                            description:
+                                'LLM generates structured recommendation.',
+                        },
+                        {
+                            title: 'Response & Logging',
+                            description:
+                                'Output returned as JSON and saved in MongoDB.',
+                        },
+                    ]}
+                />
+            </Section>
+
+            <Section title="🧰 Tech Stack">
+                <Table
+                    headers={['Component', 'Technology']}
+                    rows={[
+                        ['Backend Framework', 'FastAPI'],
+                        ['LLM Inference', 'Gemma 2 (via Hugging Face)'],
+                        ['RAG Framework', 'LangChain'],
+                        ['Vector Store', 'FAISS'],
+                        ['Embeddings', 'SentenceTransformers / HuggingFace'],
+                        ['Database', 'MongoDB'],
+                        ['API Interaction', 'REST (FastAPI)'],
+                    ]}
+                />
+            </Section>
+
+            <Section title="🚀 How to Use">
+                <div className="space-y-6">
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            1. Clone Repository
+                        </h3>
+                        <CodeBlock>
+                            git clone https://github.com/your-username/snag-rectifier
+                            cd snag-rectifier
+                        </CodeBlock>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            2. Setup Environment
+                        </h3>
+                        <CodeBlock>
+                            python -m venv venv
+                            source venv/bin/activate  # Windows: venv\Scripts\activate
+                            pip install -r requirements.txt
+                        </CodeBlock>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            3. Load Historical Data
+                        </h3>
+                        <p className="text-primary-700 mb-3">
+                            Format your historical snag cases in data/historical_snags.json
+                            Run embedding script to build FAISS index:
+                        </p>
+                        <CodeBlock>
+                            python scripts/build_vector_store.py
+                        </CodeBlock>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            4. Run FastAPI Server
+                        </h3>
+                        <CodeBlock>
+                            uvicorn app.main:app --reload
+                        </CodeBlock>
+                        <p className="text-primary-700 mb-3">
+                            Server available at: http://localhost:8000/docs
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium text-primary-900 mb-4">
+                            5. Submit a Snag
+                        </h3>
+                        <CodeBlock>
+                            POST /resolve-snag
+                            {`{
+  "query": "Snag: hydraulic pressure low in the right gear system"
+}`}
+                        </CodeBlock>
+                    </div>
+                </div>
+            </Section>
+
+            <Section title="📊 Charts and Dashboard">
+                <p className="text-primary-700 leading-relaxed mb-4">
+                    /charts/summary: Radar, Pie, and Bar charts (via JSON)
+                    /logs: View past snag resolutions
+                    Compatible with Streamlit or React dashboards
+                </p>
+            </Section>
+
+            <Section title="⚠️ Limitations">
+                <div className="space-y-3">
+                    {[
+                        'Gemma 2 may need GPU or quantized version for speed',
+                        'Poor embeddings can lead to irrelevant results',
+                        'Not supported (text input only)',
+                        'Handles one snag at a time',
+                    ].map((limitation, index) => (
+                        <InfoCard
+                            key={index}
+                            title="Constraint"
+                            description={limitation}
+                            type="warning"
+                        />
+                    ))}
+                </div>
+            </Section>
+
+            <Section title="📈 Future Improvements">
+                <FeatureGrid
+                    features={[
+                        {
+                            title: '✅ Web frontend using Streamlit/React',
+                            description: '',
+                        },
+                        {
+                            title: '🔒 Auth & user roles for technicians and engineers',
+                            description: '',
+                        },
+                        {
+                            title: '🌐 Multilingual snag handling (Hindi, Spanish)',
+                            description: '',
+                        },
+                        {
+                            title: '🧠 Feedback loop with technician input',
+                            description: '',
+                        },
+                        {
+                            title: '🧪 Model confidence scoring',
+                            description: '',
+                        },
+                        {
+                            title: '🔄 Online learning from user-labeled corrections',
+                            description: '',
+                        },
+                        {
+                            title: '🛰️ Integration with aircraft diagnostic APIs (ACMS, CMS)',
+                            description: '',
+                        },
+                    ]}
+                />
+            </Section>
+        </div>
+    );
+
     return (
         <div className="relative min-h-screen bg-primary-50">
             <a
@@ -784,11 +1084,9 @@ const DocumentationPage = ({
             </a>
             <ProjectSelector />
             <main className="max-w-7xl mx-auto px-6 py-8">
-                {activeProject === 'visioncheck' ? (
-                    <VisionCheckContent />
-                ) : (
-                    <CockpitContent />
-                )}
+                {activeProject === 'visioncheck' && <VisionCheckContent />}
+                {activeProject === 'cockpit' && <CockpitContent />}
+                {activeProject === 'snag' && <SnaGenieContent />}
             </main>
         </div>
     );
