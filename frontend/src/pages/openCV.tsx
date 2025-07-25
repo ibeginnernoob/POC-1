@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
     Upload,
     Download,
@@ -11,16 +11,40 @@ import {
 import { set } from 'date-fns';
 
 export default function OpenCV() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
     const [uploadImage, setUploadImage] = useState<File | null>(null);
     const [uploadImgSrc, setUploadImgSrc] = useState<string | null>(null);
-    const [resultImage, setResultImage] = useState(null);
-    const [csvData, setCsvData] = useState(null);
+    const [resultImageURL, setResultImageURL] = useState<string | null>(null);
+    const [csvDataLink, setCsvDataLink] = useState<string | null>(null);
+    const [resultImageLink, setResultImageLink] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [pageState, setPageState] = useState<'land' | 'upload' | 'result'>(
         'land'
     );
+
+    useEffect(() => {
+        return () => {
+            // Clean up the object URL when the component unmounts
+            if (uploadImgSrc) {
+                URL.revokeObjectURL(uploadImgSrc);
+            }
+            if (resultImageURL) {
+                URL.revokeObjectURL(resultImageURL);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (pageState === 'land') {
+            setUploadImgSrc(null);
+            setUploadImage(null);
+            setResultImageLink(null);
+            setCsvDataLink(null);
+            setResultImageURL(null);
+        }
+    }, [pageState]);
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -98,6 +122,86 @@ export default function OpenCV() {
             setUploadImage(file);
             setUploadImgSrc(imageUrl);
             setPageState('upload');
+        }
+    };
+
+    const handleDownload = async (type: 'csv' | 'image') => {
+        if (type === 'csv' && !csvDataLink) return; // Prevent action if URL isn't set
+        if (type === 'image' && !resultImageLink) return;
+
+        try {
+            const response = await fetch(
+                `http://192.168.2.4:8000/${
+                    type === 'csv' ? csvDataLink : resultImageLink
+                }`
+            );
+            if (!response.ok) {
+                throw new Error('Failed to download file');
+            }
+
+            const fileBlob = await response.blob(); // Get as blob
+
+            // Create a temporary URL for the blob
+            const downloadUrl = URL.createObjectURL(fileBlob);
+
+            // Create a hidden anchor element to trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'shapes.csv'; // Set the filename (customize as needed)
+            document.body.appendChild(link);
+            link.click(); // Simulate click to download
+
+            // Cleanup
+            document.body.removeChild(link);
+            URL.revokeObjectURL(downloadUrl);
+        } catch (err) {
+            console.error('Download error:', err);
+            alert('Failed to download file. Please try again.');
+        }
+    };
+
+    const fetchResult = async () => {
+        const formData = new FormData();
+
+        // Append the file with the key name your FastAPI endpoint expects
+        formData.append('file', uploadImage as Blob);
+
+        try {
+            const response = await fetch(
+                'http://192.168.2.4:8000/detect-shapes',
+                {
+                    method: 'POST',
+                    body: formData, // Don't set Content-Type header - let browser set it
+                }
+            );
+
+            if (!response || !response.ok) {
+                throw new Error('Failed to fetch image');
+            }
+
+            // Get the image as a blob from the response body
+            const imageBlob = await response.blob();
+
+            // Create a temporary URL for the blob
+            const url = URL.createObjectURL(imageBlob);
+
+            console.log('Image URL:', url);
+            console.log(response);
+            console.log(response.headers);
+            console.log(response.headers.get('x-photo-download-url'));
+            console.log(response.headers.get('x-csv-download-url'));
+
+            // Store the URL in state
+            setResultImageURL(url);
+            setResultImageLink(
+                response.headers.get('x-photo-download-url') || null
+            );
+            setCsvDataLink(response.headers.get('x-csv-download-url') || null);
+            setPageState('result');
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert('Failed to process image. Please try again.');
+            setPageState('land');
         }
     };
 
@@ -530,14 +634,34 @@ export default function OpenCV() {
                 {pageState === 'upload' && uploadImage && uploadImgSrc && (
                     <div className="flex-1 w-full flex flex-col items-center justify-center">
                         <div>
-							
-                            <img
+                            {/* <img
                                 src={uploadImgSrc || ''}
                                 alt="Uploaded content"
                                 className="max-w-3xl max-h-3xl aspect-auto rounded-xl shadow-lg"
+                            /> */}
+                            <img
+                                src={uploadImgSrc || ''}
+                                alt="Uploaded content"
+                                // className="max-w-3xl max-h-3xl aspect-auto rounded-xl shadow-lg object-contain"
+                                style={{
+                                    maxWidth:
+                                        '48rem' /* equivalent to max-w-3xl */,
+                                    maxHeight:
+                                        '44rem' /* equivalent to max-h-3xl */,
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                    borderRadius:
+                                        '0.75rem' /* equivalent to rounded-xl */,
+                                    boxShadow:
+                                        '0 10px 15px -3px rgba(0, 0, 0, 0.1)' /* equivalent to shadow-lg */,
+                                }}
                             />
                         </div>
-                        <button className="mt-10 px-4 py-2 flex flex-row items-center gap-6 bg-white text-black font-medium font-roboto text-xl rounded-lg hover:bg-slate-100 transition-colors duration-300">
+                        <button
+                            onClick={fetchResult}
+                            className="mt-10 px-4 py-2 flex flex-row items-center gap-6 bg-white text-black font-medium font-roboto text-xl rounded-lg hover:bg-slate-100 transition-colors duration-300"
+                        >
                             <DraftingCompass
                                 size={24}
                                 className="inline-block"
@@ -546,6 +670,48 @@ export default function OpenCV() {
                         </button>
                     </div>
                 )}
+                {pageState === 'result' &&
+                    resultImageLink &&
+                    resultImageURL &&
+                    csvDataLink && (
+                        <div className="flex-1 w-full flex flex-col items-center justify-center">
+                            <div>
+                                {/* <img
+                                src={uploadImgSrc || ''}
+                                alt="Uploaded content"
+                                className="max-w-3xl max-h-3xl aspect-auto rounded-xl shadow-lg"
+                            /> */}
+                                <img
+                                    src={resultImageURL || ''}
+                                    alt="Result content"
+                                    // className="max-w-3xl max-h-3xl aspect-auto rounded-xl shadow-lg object-contain"
+                                    style={{
+                                        maxWidth:
+                                            '48rem' /* equivalent to max-w-3xl */,
+                                        maxHeight:
+                                            '44rem' /* equivalent to max-h-3xl */,
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'contain',
+                                        borderRadius:
+                                            '0.75rem' /* equivalent to rounded-xl */,
+                                        boxShadow:
+                                            '0 10px 15px -3px rgba(0, 0, 0, 0.1)' /* equivalent to shadow-lg */,
+                                    }}
+                                />
+                            </div>
+                            <button
+                                onClick={fetchResult}
+                                className="mt-10 px-4 py-2 flex flex-row items-center gap-6 bg-white text-black font-medium font-roboto text-xl rounded-lg hover:bg-slate-100 transition-colors duration-300"
+                            >
+                                <DraftingCompass
+                                    size={24}
+                                    className="inline-block"
+                                />
+                                <h1>Process Image</h1>
+                            </button>
+                        </div>
+                    )}
             </div>
         </div>
     );
