@@ -68,21 +68,11 @@ export default function TableModal({
                     className="border-l-[0.5px] border-t-[0.5px] border-solid border-gray-400 rounded-md"
                     style={{
                         maxHeight: '60vh',
-                        maxWidth: '100%',
-                        overflowX: 'auto',
+                        maxWidth: '100%',                        
                         overflowY: 'auto',
-                        scrollbarWidth: 'none' /* For Firefox */,
-                        msOverflowStyle:
-                            'none' /* For Internet Explorer and Edge */,
+                        overflowX: 'scroll',
                     }}
-                >
-                    <style>
-                        {`
-                            div::-webkit-scrollbar {
-                                display: none; /* For Chrome, Safari, and Opera */
-                            }
-                        `}
-                    </style>
+                >                    
                     <table
                         className="w-full"
                         style={{
